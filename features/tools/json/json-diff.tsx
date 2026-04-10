@@ -1,0 +1,108 @@
+'use client'
+
+import { useState, useCallback, useEffect, useMemo } from 'react'
+import { ToolShell } from '@/components/tools/tool-shell'
+import { DualEditorPanel } from '@/components/tools/dual-editor-panel'
+import { DiffViewer } from '@/components/tools/diff-viewer'
+import { getToolById } from '@/config/tool-registry'
+import { useAppStore } from '@/store/app-store'
+import { beautifyJson, validateJson } from '@/utils/parsers/json'
+
+export function JsonDiff() {
+  const tool = getToolById('json-diff')!
+  const { getToolDraft, setToolDraft, getToolDraftSecondary, setToolDraftSecondary } =
+    useAppStore()
+
+  const [leftInput, setLeftInput] = useState('')
+  const [rightInput, setRightInput] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const draftSecondary = getToolDraftSecondary(tool.id)
+    if (draft) setLeftInput(draft)
+    if (draftSecondary) setRightInput(draftSecondary)
+  }, [getToolDraft, getToolDraftSecondary, tool.id])
+
+  const handleLeftChange = useCallback(
+    (value: string) => {
+      setLeftInput(value)
+      setToolDraft(tool.id, value)
+    },
+    [setToolDraft, tool.id]
+  )
+
+  const handleRightChange = useCallback(
+    (value: string) => {
+      setRightInput(value)
+      setToolDraftSecondary(tool.id, value)
+    },
+    [setToolDraftSecondary, tool.id]
+  )
+
+  const { leftFormatted, rightFormatted } = useMemo(() => {
+    let left = ''
+    let right = ''
+    setError('')
+
+    if (leftInput.trim()) {
+      const validation = validateJson(leftInput)
+      if (validation.valid) {
+        try {
+          left = beautifyJson(leftInput)
+        } catch {
+          left = leftInput
+        }
+      } else {
+        left = leftInput
+        if (!rightInput.trim() || validateJson(rightInput).valid) {
+          setError('Left input is not valid JSON')
+        }
+      }
+    }
+
+    if (rightInput.trim()) {
+      const validation = validateJson(rightInput)
+      if (validation.valid) {
+        try {
+          right = beautifyJson(rightInput)
+        } catch {
+          right = rightInput
+        }
+      } else {
+        right = rightInput
+        if (!leftInput.trim() || validateJson(leftInput).valid) {
+          setError('Right input is not valid JSON')
+        }
+      }
+    }
+
+    return { leftFormatted: left, rightFormatted: right }
+  }, [leftInput, rightInput])
+
+  return (
+    <ToolShell tool={tool} showHistory={false}>
+      <div className="flex flex-col gap-4">
+        <DualEditorPanel
+          leftValue={leftInput}
+          rightValue={rightInput}
+          onLeftChange={handleLeftChange}
+          onRightChange={handleRightChange}
+          leftTitle="Original"
+          rightTitle="Modified"
+          leftPlaceholder="Paste first JSON here..."
+          rightPlaceholder="Paste second JSON here..."
+        />
+        {error && (
+          <p className="text-sm text-destructive-foreground px-1">{error}</p>
+        )}
+        <DiffViewer
+          left={leftFormatted}
+          right={rightFormatted}
+          leftTitle="Original"
+          rightTitle="Modified"
+        />
+      </div>
+    </ToolShell>
+  )
+}
