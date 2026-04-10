@@ -11,12 +11,13 @@ import { generateUUID, validateUUID } from '@/utils/security'
 
 export function UuidGenerator() {
   const tool = getToolById('uuid-generator')!
+  const VALIDATION_EXAMPLE = '550e8400-e29b-41d4-a716-446655440000'
 
   const [uuids, setUuids] = useState<string[]>([generateUUID()])
   const [count, setCount] = useState(1)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
-  const [validateInput, setValidateInput] = useState('')
-  const [isValid, setIsValid] = useState<boolean | null>(null)
+  const [validateInput, setValidateInput] = useState(VALIDATION_EXAMPLE)
+  const [isValid, setIsValid] = useState<boolean | null>(validateUUID(VALIDATION_EXAMPLE))
 
   const generateNew = useCallback(() => {
     const newUuids = Array.from({ length: count }, () => generateUUID())

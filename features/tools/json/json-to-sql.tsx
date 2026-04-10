@@ -13,20 +13,19 @@ import { Label } from '@/components/ui/label'
 export function JsonToSql() {
   const tool = getToolById('json-to-sql')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
+  const EXAMPLE = `[
+  { "id": 1, "name": "Alice", "country": "DE", "active": true },
+  { "id": 2, "name": "Bob", "country": "US", "active": false }
+]`
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [output, setOutput] = useState('')
   const [tableName, setTableName] = useState('data')
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
-
   const processJson = useCallback(
-    (value: string, table: string = tableName) => {
+    (value: string, table: string = tableName, source: 'user' | 'example' = 'user') => {
       if (!value.trim()) {
         setOutput('')
         setStatus('idle')
@@ -48,7 +47,7 @@ export function JsonToSql() {
         setOutput(result)
         setStatus('success')
         setErrorMessage('')
-        addToolHistory({ toolId: tool.id, input: value, output: result })
+        addToolHistory({ toolId: tool.id, input: value, output: result }, { source })
       } catch (e) {
         setStatus('error')
         setErrorMessage((e as Error).message)
@@ -57,6 +56,15 @@ export function JsonToSql() {
     },
     [tableName, addToolHistory, tool.id]
   )
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      processJson(initial, tableName, 'example')
+    }
+  }, [getToolDraft, tool.id, autoRun, processJson, tableName])
 
   const handleInputChange = useCallback(
     (value: string) => {

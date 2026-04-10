@@ -13,20 +13,21 @@ import { Label } from '@/components/ui/label'
 export function JsonToTypeScript() {
   const tool = getToolById('json-to-typescript')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
+  const EXAMPLE = `{
+  "id": 101,
+  "name": "Alice",
+  "roles": ["admin", "editor"],
+  "active": true
+}`
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [output, setOutput] = useState('')
   const [rootName, setRootName] = useState('Root')
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
-
   const processJson = useCallback(
-    (value: string, name: string = rootName) => {
+    (value: string, name: string = rootName, source: 'user' | 'example' = 'user') => {
       if (!value.trim()) {
         setOutput('')
         setStatus('idle')
@@ -48,7 +49,7 @@ export function JsonToTypeScript() {
         setOutput(result)
         setStatus('success')
         setErrorMessage('')
-        addToolHistory({ toolId: tool.id, input: value, output: result })
+        addToolHistory({ toolId: tool.id, input: value, output: result }, { source })
       } catch (e) {
         setStatus('error')
         setErrorMessage((e as Error).message)
@@ -57,6 +58,15 @@ export function JsonToTypeScript() {
     },
     [rootName, addToolHistory, tool.id]
   )
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      processJson(initial, rootName, 'example')
+    }
+  }, [getToolDraft, tool.id, autoRun, processJson, rootName])
 
   const handleInputChange = useCallback(
     (value: string) => {

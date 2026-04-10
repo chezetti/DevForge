@@ -11,19 +11,15 @@ import { formatSql } from '@/utils/sql'
 export function SqlFormatter() {
   const tool = getToolById('sql-formatter')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
+  const EXAMPLE = 'select u.id,u.email,count(o.id) as orders from users u left join orders o on o.user_id=u.id where u.active=true group by u.id,u.email order by orders desc limit 10;'
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [output, setOutput] = useState('')
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
-
   const format = useCallback(
-    (value: string) => {
+    (value: string, source: 'user' | 'example' = 'user') => {
       if (!value.trim()) {
         setOutput('')
         setStatus('idle')
@@ -36,7 +32,7 @@ export function SqlFormatter() {
         setOutput(result)
         setStatus('success')
         setErrorMessage('')
-        addToolHistory({ toolId: tool.id, input: value, output: result })
+        addToolHistory({ toolId: tool.id, input: value, output: result }, { source })
       } catch (e) {
         setStatus('error')
         setErrorMessage((e as Error).message)
@@ -45,6 +41,15 @@ export function SqlFormatter() {
     },
     [addToolHistory, tool.id]
   )
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      format(initial, 'example')
+    }
+  }, [getToolDraft, tool.id, autoRun, format])
 
   const handleInputChange = useCallback(
     (value: string) => {

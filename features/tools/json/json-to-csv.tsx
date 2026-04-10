@@ -13,20 +13,19 @@ import { Label } from '@/components/ui/label'
 export function JsonToCsv() {
   const tool = getToolById('json-to-csv')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
+  const EXAMPLE = `[
+  { "name": "Alice", "email": "alice@example.com", "age": 29 },
+  { "name": "Bob", "email": "bob@example.com", "age": 34 }
+]`
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [output, setOutput] = useState('')
   const [includeHeaders, setIncludeHeaders] = useState(true)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
-
   const processJson = useCallback(
-    (value: string, headers: boolean = includeHeaders) => {
+    (value: string, headers: boolean = includeHeaders, source: 'user' | 'example' = 'user') => {
       if (!value.trim()) {
         setOutput('')
         setStatus('idle')
@@ -54,7 +53,7 @@ export function JsonToCsv() {
         setOutput(result)
         setStatus('success')
         setErrorMessage('')
-        addToolHistory({ toolId: tool.id, input: value, output: result })
+        addToolHistory({ toolId: tool.id, input: value, output: result }, { source })
       } catch (e) {
         setStatus('error')
         setErrorMessage((e as Error).message)
@@ -63,6 +62,15 @@ export function JsonToCsv() {
     },
     [includeHeaders, addToolHistory, tool.id]
   )
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      processJson(initial, includeHeaders, 'example')
+    }
+  }, [getToolDraft, tool.id, autoRun, processJson, includeHeaders])
 
   const handleInputChange = useCallback(
     (value: string) => {

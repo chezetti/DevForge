@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { GitCompare } from "lucide-react";
 
 export function TextDiff() {
-  const [left, setLeft] = useState("");
-  const [right, setRight] = useState("");
-  const [showDiff, setShowDiff] = useState(false);
+  const [left, setLeft] = useState("Hello team,\nThe deployment is scheduled for Friday at 10:00 UTC.\nPlease review the changelog.");
+  const [right, setRight] = useState("Hello team,\nThe deployment is scheduled for Friday at 12:00 UTC.\nPlease review the release notes.");
+  const [showDiff, setShowDiff] = useState(true);
 
   const handleCompare = useCallback(() => {
     setShowDiff(true);

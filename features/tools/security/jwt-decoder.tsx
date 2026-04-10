@@ -11,13 +11,16 @@ import { decodeJwt } from '@/utils/security'
 export function JwtDecoder() {
   const tool = getToolById('jwt-decoder')!
   const { getToolDraft, setToolDraft, autoRun } = useAppStore()
+  const EXAMPLE =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NSIsIm5hbWUiOiJBbGljZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcxMjY3ODQwMCwiZXhwIjoyMDcxODI0MDAwfQ.signature'
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [error, setError] = useState('')
 
   useEffect(() => {
     const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
+    const initial = draft || EXAMPLE
+    setInput(initial)
   }, [getToolDraft, tool.id])
 
   const decoded = useMemo(() => {

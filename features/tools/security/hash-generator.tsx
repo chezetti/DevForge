@@ -14,19 +14,15 @@ type Algorithm = 'SHA-256' | 'SHA-384' | 'SHA-512'
 export function HashGenerator() {
   const tool = getToolById('hash-generator')!
   const { getToolDraft, setToolDraft, autoRun } = useAppStore()
+  const EXAMPLE = 'invoice:INV-2026-0042|total:199.99|currency:USD'
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [hashes, setHashes] = useState<Record<Algorithm, string>>({
     'SHA-256': '',
     'SHA-384': '',
     'SHA-512': '',
   })
   const [copiedAlgo, setCopiedAlgo] = useState<Algorithm | null>(null)
-
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
 
   const computeHashes = useCallback(async (value: string) => {
     if (!value) {
@@ -48,6 +44,15 @@ export function HashGenerator() {
 
     setHashes(Object.fromEntries(results) as Record<Algorithm, string>)
   }, [])
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      computeHashes(initial)
+    }
+  }, [getToolDraft, tool.id, autoRun, computeHashes])
 
   const handleInputChange = useCallback(
     (value: string) => {
@@ -74,12 +79,6 @@ export function HashGenerator() {
     },
     [setToolDraft, tool.id, computeHashes]
   )
-
-  useEffect(() => {
-    if (autoRun && input) {
-      computeHashes(input)
-    }
-  }, [])
 
   return (
     <ToolShell tool={tool} onHistorySelect={handleHistorySelect}>

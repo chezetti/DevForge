@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ToolShell } from "@/components/tools/tool-shell";
 import { OutputPanel } from "@/components/tools/output-panel";
 import { Button } from "@/components/ui/button";
@@ -99,6 +99,10 @@ export function LoremGenerator() {
 
     setOutput(result);
   }, [type, count, startWithLorem]);
+
+  useEffect(() => {
+    generate();
+  }, [generate]);
 
   return (
     <ToolShell toolId="lorem-generator">

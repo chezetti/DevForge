@@ -12,16 +12,28 @@ export function JsonDiff() {
   const tool = getToolById('json-diff')!
   const { getToolDraft, setToolDraft, getToolDraftSecondary, setToolDraftSecondary } =
     useAppStore()
+  const LEFT_EXAMPLE = `{
+  "id": 7,
+  "name": "Project Alpha",
+  "status": "draft",
+  "members": 3
+}`
+  const RIGHT_EXAMPLE = `{
+  "id": 7,
+  "name": "Project Alpha",
+  "status": "published",
+  "members": 5
+}`
 
-  const [leftInput, setLeftInput] = useState('')
-  const [rightInput, setRightInput] = useState('')
+  const [leftInput, setLeftInput] = useState(LEFT_EXAMPLE)
+  const [rightInput, setRightInput] = useState(RIGHT_EXAMPLE)
   const [error, setError] = useState('')
 
   useEffect(() => {
     const draft = getToolDraft(tool.id)
     const draftSecondary = getToolDraftSecondary(tool.id)
-    if (draft) setLeftInput(draft)
-    if (draftSecondary) setRightInput(draftSecondary)
+    setLeftInput(draft || LEFT_EXAMPLE)
+    setRightInput(draftSecondary || RIGHT_EXAMPLE)
   }, [getToolDraft, getToolDraftSecondary, tool.id])
 
   const handleLeftChange = useCallback(

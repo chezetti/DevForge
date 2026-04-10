@@ -16,20 +16,16 @@ type Mode = 'encode' | 'decode'
 export function Base64Tool() {
   const tool = getToolById('base64')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
+  const EXAMPLE = 'DevForge API key: demo_12345'
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [output, setOutput] = useState('')
   const [mode, setMode] = useState<Mode>('encode')
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
-
   const convert = useCallback(
-    (value: string, currentMode: Mode = mode) => {
+    (value: string, currentMode: Mode = mode, source: 'user' | 'example' = 'user') => {
       if (!value.trim()) {
         setOutput('')
         setStatus('idle')
@@ -47,7 +43,7 @@ export function Base64Tool() {
         setOutput(result)
         setStatus('success')
         setErrorMessage('')
-        addToolHistory({ toolId: tool.id, input: value, output: result })
+        addToolHistory({ toolId: tool.id, input: value, output: result }, { source })
       } catch (e) {
         setStatus('error')
         setErrorMessage((e as Error).message)
@@ -56,6 +52,15 @@ export function Base64Tool() {
     },
     [mode, addToolHistory, tool.id]
   )
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      convert(initial, mode, 'example')
+    }
+  }, [getToolDraft, tool.id, autoRun, convert, mode])
 
   const handleInputChange = useCallback(
     (value: string) => {

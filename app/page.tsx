@@ -304,9 +304,6 @@ function ToolCard({ tool, onClick, onToggleFavorite }: ToolCardProps) {
         <h3 className="font-medium group-hover:text-primary transition-colors">
           {tool.title}
         </h3>
-        {isFavorite && (
-          <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 shrink-0" />
-        )}
       </div>
       <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
         {tool.description}

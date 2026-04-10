@@ -15,7 +15,7 @@ interface ConversionResult {
 }
 
 export function TimestampConverter() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState("2026-04-10T08:30:00.000Z");
   const [inputType, setInputType] = useState<"unix" | "iso" | "auto">("auto");
   const [timezone, setTimezone] = useState("UTC");
   const [timestamp, setTimestamp] = useState<number | null>(null);

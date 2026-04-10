@@ -26,9 +26,10 @@ export function JsonBeautifier() {
   const [indent, setIndent] = useState('2')
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   const processJson = useCallback(
-    (value: string) => {
+    (value: string, source: 'user' | 'example' = 'user') => {
       if (!value.trim()) {
         setOutput('')
         setStatus('idle')
@@ -53,7 +54,7 @@ export function JsonBeautifier() {
         setOutput(result)
         setStatus('success')
         setErrorMessage('')
-        addToolHistory({ toolId: tool.id, input: value, output: result })
+        addToolHistory({ toolId: tool.id, input: value, output: result }, { source })
       } catch (e) {
         setStatus('error')
         setErrorMessage((e as Error).message)
@@ -92,12 +93,14 @@ export function JsonBeautifier() {
     const draft = getToolDraft(tool.id)
     const initial = draft || JSON_BEAUTIFIER_EXAMPLE
     setInput(initial)
-    processJson(initial)
+    processJson(initial, 'example')
+    setIsInitialLoad(false)
   }, [getToolDraft, tool.id, processJson])
 
   useEffect(() => {
+    if (isInitialLoad) return
     if (autoRun && input) processJson(input)
-  }, [indent, autoRun, input, processJson])
+  }, [indent, autoRun, input, processJson, isInitialLoad])
 
   return (
     <ToolShell

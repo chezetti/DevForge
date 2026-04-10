@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ToolShell } from "@/components/tools/tool-shell";
 import { EditorPanel } from "@/components/tools/editor-panel";
 import { OutputPanel } from "@/components/tools/output-panel";
@@ -50,6 +50,10 @@ export function CurlConverter() {
   const handleInputChange = (value: string) => {
     setInput(value);
   };
+
+  useEffect(() => {
+    convert();
+  }, [convert]);
 
   return (
     <ToolShell toolId="curl-converter">

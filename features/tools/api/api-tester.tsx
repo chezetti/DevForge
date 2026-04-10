@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ToolShell } from "@/components/tools/tool-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,7 @@ const HTTP_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"
 
 export function ApiTester() {
   const [method, setMethod] = useState("GET");
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState("https://jsonplaceholder.typicode.com/todos/1");
   const [headers, setHeaders] = useState<Header[]>([
     { key: "Content-Type", value: "application/json", enabled: true },
   ]);
@@ -125,6 +125,10 @@ export function ApiTester() {
     if (s >= 400) return "text-red-500";
     return "text-muted-foreground";
   };
+
+  useEffect(() => {
+    sendRequest();
+  }, [sendRequest]);
 
   return (
     <ToolShell toolId="api-tester">

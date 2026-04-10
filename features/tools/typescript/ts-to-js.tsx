@@ -11,19 +11,23 @@ import * as ts from 'typescript'
 export function TsToJs() {
   const tool = getToolById('ts-to-js')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
+  const EXAMPLE = `type User = {
+  id: number
+  name: string
+  isActive: boolean
+}
 
-  const [input, setInput] = useState('')
+export const greetUser = (user: User): string => {
+  return \`Hello, \${user.name}! Active: \${user.isActive}\`
+}`
+
+  const [input, setInput] = useState(EXAMPLE)
   const [output, setOutput] = useState('')
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
-
   const transpile = useCallback(
-    (value: string) => {
+    (value: string, source: 'user' | 'example' = 'user') => {
       if (!value.trim()) {
         setOutput('')
         setStatus('idle')
@@ -44,7 +48,7 @@ export function TsToJs() {
         setOutput(result.outputText)
         setStatus('success')
         setErrorMessage('')
-        addToolHistory({ toolId: tool.id, input: value, output: result.outputText })
+        addToolHistory({ toolId: tool.id, input: value, output: result.outputText }, { source })
       } catch (e) {
         setStatus('error')
         setErrorMessage((e as Error).message)
@@ -53,6 +57,15 @@ export function TsToJs() {
     },
     [addToolHistory, tool.id]
   )
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      transpile(initial, 'example')
+    }
+  }, [getToolDraft, tool.id, autoRun, transpile])
 
   const handleInputChange = useCallback(
     (value: string) => {

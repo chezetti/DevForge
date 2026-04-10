@@ -56,7 +56,12 @@ export function ToolShell({
     panelOrientation,
     setPanelOrientation,
   } = useAppStore()
-  const history = showHistory ? getToolHistory(safeTool.id) : []
+  const history = showHistory
+    ? getToolHistory(safeTool.id).filter(
+        (entry, index, arr) =>
+          arr.findIndex((candidate) => candidate.input === entry.input) === index
+      )
+    : []
   const favorite = isFavorite(safeTool.id)
 
   const handleShare = async () => {

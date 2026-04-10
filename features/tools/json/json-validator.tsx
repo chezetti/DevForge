@@ -11,19 +11,19 @@ import { validateJson } from '@/utils/parsers/json'
 export function JsonValidator() {
   const tool = getToolById('json-validator')!
   const { getToolDraft, setToolDraft, autoRun } = useAppStore()
+  const EXAMPLE = `{
+  "name": "Alice",
+  "roles": ["admin", "editor"],
+  "active": true
+}`
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [validation, setValidation] = useState<{
     valid: boolean
     error?: string
     line?: number
     column?: number
   } | null>(null)
-
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
 
   const validate = useCallback((value: string) => {
     if (!value.trim()) {
@@ -32,6 +32,15 @@ export function JsonValidator() {
     }
     setValidation(validateJson(value))
   }, [])
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      validate(initial)
+    }
+  }, [getToolDraft, tool.id, autoRun, validate])
 
   const handleInputChange = useCallback(
     (value: string) => {

@@ -14,9 +14,19 @@ export function JsonMerge() {
   const tool = getToolById('json-merge')!
   const { getToolDraft, setToolDraft, getToolDraftSecondary, setToolDraftSecondary, autoRun } =
     useAppStore()
+  const LEFT_EXAMPLE = `{
+  "user": { "id": 1, "name": "Alice" },
+  "permissions": ["read"],
+  "theme": "dark"
+}`
+  const RIGHT_EXAMPLE = `{
+  "user": { "email": "alice@example.com" },
+  "permissions": ["read", "write"],
+  "timezone": "Europe/Berlin"
+}`
 
-  const [leftInput, setLeftInput] = useState('')
-  const [rightInput, setRightInput] = useState('')
+  const [leftInput, setLeftInput] = useState(LEFT_EXAMPLE)
+  const [rightInput, setRightInput] = useState(RIGHT_EXAMPLE)
   const [deepMerge, setDeepMerge] = useState(true)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -24,8 +34,8 @@ export function JsonMerge() {
   useEffect(() => {
     const draft = getToolDraft(tool.id)
     const draftSecondary = getToolDraftSecondary(tool.id)
-    if (draft) setLeftInput(draft)
-    if (draftSecondary) setRightInput(draftSecondary)
+    setLeftInput(draft || LEFT_EXAMPLE)
+    setRightInput(draftSecondary || RIGHT_EXAMPLE)
   }, [getToolDraft, getToolDraftSecondary, tool.id])
 
   const handleLeftChange = useCallback(

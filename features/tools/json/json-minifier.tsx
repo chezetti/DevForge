@@ -11,20 +11,20 @@ import { minifyJson, validateJson } from '@/utils/parsers/json'
 export function JsonMinifier() {
   const tool = getToolById('json-minifier')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
+  const EXAMPLE = `{
+  "project": "DevForge",
+  "features": ["json", "api", "mongodb"],
+  "stats": { "users": 128, "active": true }
+}`
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(EXAMPLE)
   const [output, setOutput] = useState('')
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [stats, setStats] = useState({ original: 0, minified: 0 })
 
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
-
   const processJson = useCallback(
-    (value: string) => {
+    (value: string, source: 'user' | 'example' = 'user') => {
       if (!value.trim()) {
         setOutput('')
         setStatus('idle')
@@ -51,7 +51,7 @@ export function JsonMinifier() {
         setStatus('success')
         setErrorMessage('')
         setStats({ original: value.length, minified: result.length })
-        addToolHistory({ toolId: tool.id, input: value, output: result })
+        addToolHistory({ toolId: tool.id, input: value, output: result }, { source })
       } catch (e) {
         setStatus('error')
         setErrorMessage((e as Error).message)
@@ -60,6 +60,15 @@ export function JsonMinifier() {
     },
     [addToolHistory, tool.id]
   )
+
+  useEffect(() => {
+    const draft = getToolDraft(tool.id)
+    const initial = draft || EXAMPLE
+    setInput(initial)
+    if (autoRun) {
+      processJson(initial, 'example')
+    }
+  }, [getToolDraft, tool.id, autoRun, processJson])
 
   const handleInputChange = useCallback(
     (value: string) => {

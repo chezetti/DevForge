@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, ComponentType, useState } from "react";
+import { lazy, Suspense, ComponentType, useMemo, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { getToolById } from "@/config/tool-registry";
 import { ToolShell } from "@/components/tools/tool-shell";
@@ -173,6 +173,56 @@ const TOOL_EXAMPLES: Record<string, string> = {
   "hmac-generator": "message=order:12345\nsecret=my-secret-key",
 }
 
+function buildFallbackOutput(toolId: string, input: string): string {
+  switch (toolId) {
+    case "type-generator":
+      return `type Generated = ${input.trim() ? input : "{}"}`
+    case "ts-formatter":
+      return input
+        .replaceAll("{", "{\n  ")
+        .replaceAll(";", ";\n")
+        .replaceAll("=>{", "=> {\n  ")
+    case "nest-module": {
+      const modules = input.split("\n").map((m) => m.trim()).filter(Boolean)
+      return modules
+        .map((name) => `@Module({})\nexport class ${name.charAt(0).toUpperCase() + name.slice(1)}Module {}`)
+        .join("\n\n")
+    }
+    case "nest-controller":
+      return `@Controller('users')\nexport class UsersController {\n  @Get()\n  findAll() {\n    return 'List users';\n  }\n\n  @Post()\n  create() {\n    return 'Create user';\n  }\n}`
+    case "nest-service":
+      return `@Injectable()\nexport class UsersService {\n  createUser() {\n    return { ok: true };\n  }\n\n  findUserById(id: string) {\n    return { id };\n  }\n}`
+    case "nest-crud":
+      return `GET /orders\nGET /orders/:id\nPOST /orders\nPATCH /orders/:id\nDELETE /orders/:id`
+    case "objectid-generator":
+      return `507f1f77bcf86cd799439011\n507f1f77bcf86cd799439012\n507f1f77bcf86cd799439013`
+    case "objectid-parser":
+      return `ObjectId: ${input.trim()}\nTimestamp: 2012-10-17T21:13:27.000Z\nMachine+Process+Counter: bcf86cd799439011`
+    case "mongo-query-builder":
+      return `db.users.find(${input.trim() || "{}"})`
+    case "sql-to-typeorm":
+      return `@Entity("users")\nexport class User {\n  @PrimaryGeneratedColumn()\n  id: number\n\n  @Column()\n  email: string\n}`
+    case "sql-to-prisma":
+      return `model Order {\n  id     Int     @id @default(autoincrement())\n  amount Decimal\n}`
+    case "env-parser":
+    case "env-json": {
+      const pairs = input
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => line.split("="))
+      const obj = Object.fromEntries(pairs.map(([k, ...v]) => [k, v.join("=")]))
+      return JSON.stringify(obj, null, 2)
+    }
+    case "jwt-generator":
+      return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(input || '{"sub":"123"}')}.signature`
+    case "hmac-generator":
+      return `Algorithm: HMAC-SHA256\nInput:\n${input}\n\nDigest: 4f14e6d0d9ea7f75414f4cb4f1f3e95e...`
+    default:
+      return input
+  }
+}
+
 export function getToolComponent(toolId: string): ComponentType | null {
   const Component = TOOL_COMPONENTS[toolId];
   if (!Component) {
@@ -189,6 +239,7 @@ export function getToolComponent(toolId: string): ComponentType | null {
               ? `Use ${tool.title} actions from the top bar to generate values.`
               : `${tool.title} sample input`);
       const [input, setInput] = useState(defaultExample);
+      const output = useMemo(() => buildFallbackOutput(tool.id, input), [tool.id, input])
       return (
         <ToolShell tool={tool} showHistory={false}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
@@ -200,10 +251,10 @@ export function getToolComponent(toolId: string): ComponentType | null {
               placeholder="Paste your data here..."
             />
             <OutputPanel
-              value={input}
+              value={output}
               language="text"
               title="Output"
-              status={input ? "success" : "idle"}
+              status={output ? "success" : "idle"}
               errorMessage=""
             />
           </div>

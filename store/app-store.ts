@@ -30,7 +30,7 @@ interface AppState {
   
   // Tool history
   toolHistory: ToolHistory[]
-  addToolHistory: (entry: Omit<ToolHistory, 'timestamp'>) => void
+  addToolHistory: (entry: Omit<ToolHistory, 'timestamp'>, options?: { source?: 'user' | 'example' }) => void
   getToolHistory: (toolId: string) => ToolHistory[]
   clearToolHistory: (toolId: string) => void
   
@@ -86,12 +86,28 @@ export const useAppStore = create<AppState>()(
       
       // Tool history
       toolHistory: [],
-      addToolHistory: (entry) => {
+      addToolHistory: (entry, options) => {
+        if (options?.source === 'example') {
+          return
+        }
+        if (!entry.input.trim() && !entry.output.trim()) {
+          return
+        }
         const history = get().toolHistory
+        const duplicateIndex = history.findIndex(
+          (h) =>
+            h.toolId === entry.toolId &&
+            h.input === entry.input &&
+            h.output === entry.output
+        )
+        const nextHistory =
+          duplicateIndex >= 0
+            ? history.filter((_, index) => index !== duplicateIndex)
+            : history
         const newEntry = { ...entry, timestamp: Date.now() }
         // Keep last 50 entries per tool, max 200 total
-        const filtered = history.filter((h) => h.toolId !== entry.toolId).slice(0, 150)
-        const toolEntries = history.filter((h) => h.toolId === entry.toolId).slice(0, 49)
+        const filtered = nextHistory.filter((h) => h.toolId !== entry.toolId).slice(0, 150)
+        const toolEntries = nextHistory.filter((h) => h.toolId === entry.toolId).slice(0, 49)
         set({ toolHistory: [newEntry, ...toolEntries, ...filtered] })
       },
       getToolHistory: (toolId) => {
@@ -130,6 +146,11 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'devforge-storage',
+      version: 2,
+      migrate: (persistedState: any) => ({
+        ...persistedState,
+        toolHistory: [],
+      }),
       partialize: (state) => ({
         recentTools: state.recentTools,
         favorites: state.favorites,
