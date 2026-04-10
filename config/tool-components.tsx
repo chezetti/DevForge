@@ -155,6 +155,24 @@ function ToolLoading() {
   );
 }
 
+const TOOL_EXAMPLES: Record<string, string> = {
+  "type-generator": '{\n  "id": 101,\n  "name": "Alice",\n  "active": true\n}',
+  "ts-formatter": "export const greet=(name:string)=>{return `Hello, ${name}`}",
+  "nest-module": "users\nauth\nbilling",
+  "nest-controller": "users\nGET /users\nPOST /users",
+  "nest-service": "UsersService\ncreateUser\nfindUserById",
+  "nest-crud": '{\n  "resource": "orders",\n  "fields": ["id", "status", "amount"]\n}',
+  "objectid-generator": "Generate MongoDB ObjectId values for test documents.",
+  "objectid-parser": "507f1f77bcf86cd799439011",
+  "mongo-query-builder": '{\n  "status": "active",\n  "age": { "$gte": 18 }\n}',
+  "sql-to-typeorm": "CREATE TABLE users (id SERIAL PRIMARY KEY, email TEXT NOT NULL);",
+  "sql-to-prisma": "CREATE TABLE orders (id SERIAL PRIMARY KEY, amount NUMERIC NOT NULL);",
+  "env-parser": "API_URL=https://api.example.com\nJWT_SECRET=secret123\nDEBUG=true",
+  "env-json": "PORT=3000\nNODE_ENV=production\nFEATURE_FLAG=true",
+  "jwt-generator": '{\n  "sub": "123",\n  "role": "admin"\n}',
+  "hmac-generator": "message=order:12345\nsecret=my-secret-key",
+}
+
 export function getToolComponent(toolId: string): ComponentType | null {
   const Component = TOOL_COMPONENTS[toolId];
   if (!Component) {
@@ -162,13 +180,14 @@ export function getToolComponent(toolId: string): ComponentType | null {
     if (!tool) return null;
     return function ToolFallbackWorkspace() {
       const defaultExample =
-        tool.inputType === "json"
-          ? '{\n  "example": true,\n  "tool": "' + tool.id + '"\n}'
+        TOOL_EXAMPLES[tool.id] ??
+        (tool.inputType === "json"
+          ? '{\n  "sample": true,\n  "toolId": "' + tool.id + '"\n}'
           : tool.inputType === "code"
-            ? `// Example input for ${tool.title}\nfunction demo() {\n  return true;\n}`
+            ? `// ${tool.title}\nconst sample = true;\n`
             : tool.inputType === "none"
-              ? "Click the toolbar actions to generate output."
-              : `Example input for ${tool.title}`;
+              ? `Use ${tool.title} actions from the top bar to generate values.`
+              : `${tool.title} sample input`);
       const [input, setInput] = useState(defaultExample);
       return (
         <ToolShell tool={tool} showHistory={false}>

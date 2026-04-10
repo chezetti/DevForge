@@ -67,7 +67,7 @@ export function OutputPanel({
   }, [])
 
   return (
-    <div className={`flex flex-col border border-border rounded bg-background-secondary ${className}`}>
+    <div className={`flex flex-col h-full min-h-0 border border-border rounded bg-background-secondary ${className}`}>
       <div className="flex items-center justify-between px-3 py-2 border-b border-border">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -107,14 +107,14 @@ export function OutputPanel({
           </Button>
         </div>
       </div>
-      <div style={{ minHeight }} className="relative">
+      <div style={{ minHeight }} className="relative flex-1 min-h-[220px]">
         {status === 'error' && errorMessage ? (
           <div className="p-4 text-sm text-destructive-foreground font-mono">
             {errorMessage}
           </div>
         ) : value ? (
           <Editor
-            height={minHeight}
+            height="100%"
             language={language}
             value={value}
             beforeMount={beforeMount}

@@ -15,21 +15,17 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+const JSON_BEAUTIFIER_EXAMPLE = `{"id":4360,"uniqid":"z7rkjcV2BV","paid":true,"created_at":"2019-07-30T12:50:03+03:00","client":{"id":235,"email":"username@gmail.com","phone":"+79100000000"}}`
+
 export function JsonBeautifier() {
   const tool = getToolById('json-beautifier')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(JSON_BEAUTIFIER_EXAMPLE)
   const [output, setOutput] = useState('')
   const [indent, setIndent] = useState('2')
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-
-  // Load draft on mount
-  useEffect(() => {
-    const draft = getToolDraft(tool.id)
-    if (draft) setInput(draft)
-  }, [getToolDraft, tool.id])
 
   const processJson = useCallback(
     (value: string) => {
@@ -91,11 +87,17 @@ export function JsonBeautifier() {
     [setToolDraft, tool.id, processJson]
   )
 
+  // Load draft on mount and execute once.
   useEffect(() => {
-    if (autoRun && input) {
-      processJson(input)
-    }
-  }, [indent])
+    const draft = getToolDraft(tool.id)
+    const initial = draft || JSON_BEAUTIFIER_EXAMPLE
+    setInput(initial)
+    processJson(initial)
+  }, [getToolDraft, tool.id, processJson])
+
+  useEffect(() => {
+    if (autoRun && input) processJson(input)
+  }, [indent, autoRun, input, processJson])
 
   return (
     <ToolShell
@@ -122,7 +124,7 @@ export function JsonBeautifier() {
           title="Input"
           placeholder="Paste your JSON here..."
           onFormat={handleFormat}
-          minHeight="400px"
+          minHeight="100%"
         />
         <OutputPanel
           value={output}
@@ -130,7 +132,7 @@ export function JsonBeautifier() {
           title="Output"
           status={status}
           errorMessage={errorMessage}
-          minHeight="400px"
+          minHeight="100%"
         />
       </div>
     </ToolShell>
