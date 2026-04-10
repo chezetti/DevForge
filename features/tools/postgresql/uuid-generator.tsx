@@ -49,7 +49,7 @@ export function UuidGenerator() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-end gap-3">
               <div className="space-y-2">
                 <Label htmlFor="count" className="text-xs text-muted-foreground">
                   Count
@@ -61,10 +61,10 @@ export function UuidGenerator() {
                   max={100}
                   value={count}
                   onChange={(e) => setCount(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
-                  className="w-24 bg-background border-border"
+                  className="w-24 bg-background border-border no-spin"
                 />
               </div>
-              <div className="flex items-end gap-2 pb-0.5">
+              <div className="flex items-center gap-2">
                 <Button onClick={generateNew} className="h-9">
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Generate

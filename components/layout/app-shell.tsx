@@ -12,7 +12,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen min-h-0 flex flex-col bg-background">
       {/* Desktop top bar */}
       <div className="hidden md:block">
         <TopBar />
@@ -21,14 +21,14 @@ export function AppShell({ children }: AppShellProps) {
       {/* Mobile nav */}
       <MobileNav />
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 min-h-0 flex overflow-hidden">
         {/* Desktop sidebar */}
         <div className="hidden md:block">
           <Sidebar />
         </div>
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 min-h-0 overflow-auto">
           {children}
         </main>
       </div>

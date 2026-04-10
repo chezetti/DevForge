@@ -50,6 +50,7 @@ export default function HomePage() {
   const recentTools = store.recentTools || [];
   const favorites = store.favorites || [];
   const addRecentTool = store.addRecentTool;
+  const toggleFavorite = store.toggleFavorite;
 
   const allTools = useMemo(() => {
     const toolsList: ExtendedTool[] = [];
@@ -181,6 +182,7 @@ export default function HomePage() {
                     key={tool.id}
                     tool={tool}
                     onClick={() => handleToolClick(tool)}
+                    onToggleFavorite={() => toggleFavorite(tool.id)}
                   />
                 ))}
               </div>
@@ -200,6 +202,7 @@ export default function HomePage() {
                     key={tool.id}
                     tool={tool}
                     onClick={() => handleToolClick(tool)}
+                    onToggleFavorite={() => toggleFavorite(tool.id)}
                   />
                 ))}
               </div>
@@ -218,6 +221,7 @@ export default function HomePage() {
                   key={tool.id}
                   tool={tool}
                   onClick={() => handleToolClick(tool)}
+                  onToggleFavorite={() => toggleFavorite(tool.id)}
                 />
               ))}
             </div>
@@ -230,9 +234,10 @@ export default function HomePage() {
               {TOOL_REGISTRY.map((category) => {
                 const Icon = CATEGORY_ICONS[category.slug] || Braces;
                 return (
-                  <div
+                  <Link
                     key={category.slug}
-                    className="p-6 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
+                    href={`/tools#${category.slug}`}
+                    className="block p-6 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
                   >
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-2 rounded-md bg-muted">
@@ -262,7 +267,7 @@ export default function HomePage() {
                         </span>
                       )}
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -282,9 +287,10 @@ export default function HomePage() {
 interface ToolCardProps {
   tool: ExtendedTool;
   onClick: () => void;
+  onToggleFavorite: () => void;
 }
 
-function ToolCard({ tool, onClick }: ToolCardProps) {
+function ToolCard({ tool, onClick, onToggleFavorite }: ToolCardProps) {
   const store = useAppStore();
   const favorites = store.favorites || [];
   const isFavorite = favorites.includes(tool.id);
@@ -309,7 +315,19 @@ function ToolCard({ tool, onClick }: ToolCardProps) {
         <Badge variant="secondary" className="text-xs">
           {tool.categoryName}
         </Badge>
-        <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite();
+            }}
+            className="h-7 w-7 inline-flex items-center justify-center rounded hover:bg-muted"
+            aria-label="Toggle favorite"
+          >
+            <Star className={`h-4 w-4 ${isFavorite ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground"}`} />
+          </button>
+          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+        </div>
       </div>
     </button>
   );

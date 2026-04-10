@@ -34,8 +34,8 @@ export function BsonJsonConverter() {
           </Select>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[calc(100%-56px)]">
-          <EditorPanel value={input} onChange={setInput} language="javascript" title="Input" />
-          <OutputPanel value={output} language="javascript" title="Output" />
+          <EditorPanel value={input} onChange={setInput} language="plaintext" title="Input" />
+          <OutputPanel value={output} language="plaintext" title="Output" />
         </div>
       </div>
     </ToolShell>

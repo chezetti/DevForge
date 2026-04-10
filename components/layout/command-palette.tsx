@@ -52,15 +52,15 @@ export function CommandPalette() {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      if (e.code === 'KeyK' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
-        setCommandPaletteOpen(!commandPaletteOpen)
+        setCommandPaletteOpen(true)
       }
     }
 
-    document.addEventListener('keydown', down)
-    return () => document.removeEventListener('keydown', down)
-  }, [commandPaletteOpen, setCommandPaletteOpen])
+    window.addEventListener('keydown', down)
+    return () => window.removeEventListener('keydown', down)
+  }, [setCommandPaletteOpen])
 
   const handleSelect = useCallback(
     (toolId: string) => {

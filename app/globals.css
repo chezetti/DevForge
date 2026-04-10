@@ -124,3 +124,29 @@
   outline: 1px solid #3F3F46;
   outline-offset: 2px;
 }
+
+/* Hide native number arrows to match UI style */
+input[type='number'],
+.no-spin {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button,
+.no-spin::-webkit-outer-spin-button,
+.no-spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Tool panel orientation controlled from ToolShell settings */
+.tool-content[data-panel-layout='vertical'] [class*='lg:grid-cols-2'] {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+@media (min-width: 1024px) {
+  .tool-content[data-panel-layout='horizontal'] [class*='lg:grid-cols-2'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
