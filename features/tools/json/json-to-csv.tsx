@@ -14,8 +14,8 @@ export function JsonToCsv() {
   const tool = getToolById('json-to-csv')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
   const EXAMPLE = `[
-  { "name": "Alice", "email": "alice@example.com", "age": 29 },
-  { "name": "Bob", "email": "bob@example.com", "age": 34 }
+  { "id": 101, "profile": { "name": "Mila" }, "meta": { "active": true } },
+  { "id": 102, "profile": { "name": "Noah" }, "meta": { "active": false } }
 ]`
 
   const [input, setInput] = useState(EXAMPLE)

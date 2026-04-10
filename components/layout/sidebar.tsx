@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import {
   Braces,
   FileCode2,
-  Blocks,
   Database,
   Table,
   Shield,
@@ -31,7 +30,6 @@ import { Input } from '@/components/ui/input'
 const categoryIcons: Record<ToolCategory, React.ReactNode> = {
   json: <Braces className="h-4 w-4" />,
   typescript: <FileCode2 className="h-4 w-4" />,
-  nestjs: <Blocks className="h-4 w-4" />,
   mongodb: <Database className="h-4 w-4" />,
   postgresql: <Table className="h-4 w-4" />,
   security: <Shield className="h-4 w-4" />,

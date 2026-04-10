@@ -28,8 +28,6 @@ export function JsonMerge() {
   const [leftInput, setLeftInput] = useState(LEFT_EXAMPLE)
   const [rightInput, setRightInput] = useState(RIGHT_EXAMPLE)
   const [deepMerge, setDeepMerge] = useState(true)
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     const draft = getToolDraft(tool.id)
@@ -54,25 +52,19 @@ export function JsonMerge() {
     [setToolDraftSecondary, tool.id]
   )
 
-  const output = useMemo(() => {
+  const result = useMemo(() => {
     if (!leftInput.trim() || !rightInput.trim()) {
-      setStatus('idle')
-      setErrorMessage('')
-      return ''
+      return { output: '', status: 'idle' as const, errorMessage: '' }
     }
 
     const leftValidation = validateJson(leftInput)
     if (!leftValidation.valid) {
-      setStatus('error')
-      setErrorMessage(`Left input: ${leftValidation.error}`)
-      return ''
+      return { output: '', status: 'error' as const, errorMessage: `Left input: ${leftValidation.error}` }
     }
 
     const rightValidation = validateJson(rightInput)
     if (!rightValidation.valid) {
-      setStatus('error')
-      setErrorMessage(`Right input: ${rightValidation.error}`)
-      return ''
+      return { output: '', status: 'error' as const, errorMessage: `Right input: ${rightValidation.error}` }
     }
 
     try {
@@ -80,19 +72,13 @@ export function JsonMerge() {
       const right = JSON.parse(rightInput)
 
       if (typeof left !== 'object' || typeof right !== 'object' || Array.isArray(left) || Array.isArray(right)) {
-        setStatus('error')
-        setErrorMessage('Both inputs must be JSON objects (not arrays)')
-        return ''
+        return { output: '', status: 'error' as const, errorMessage: 'Both inputs must be JSON objects (not arrays)' }
       }
 
       const merged = mergeJson(left, right, deepMerge)
-      setStatus('success')
-      setErrorMessage('')
-      return beautifyJson(JSON.stringify(merged))
+      return { output: beautifyJson(JSON.stringify(merged)), status: 'success' as const, errorMessage: '' }
     } catch (e) {
-      setStatus('error')
-      setErrorMessage((e as Error).message)
-      return ''
+      return { output: '', status: 'error' as const, errorMessage: (e as Error).message }
     }
   }, [leftInput, rightInput, deepMerge])
 
@@ -125,11 +111,11 @@ export function JsonMerge() {
           rightPlaceholder="Paste JSON object to merge..."
         />
         <OutputPanel
-          value={output}
+          value={result.output}
           language="json"
           title="Merged Result"
-          status={status}
-          errorMessage={errorMessage}
+          status={result.status}
+          errorMessage={result.errorMessage}
           minHeight="300px"
         />
       </div>

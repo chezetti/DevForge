@@ -26,12 +26,10 @@ const EnumGenerator = lazy(() => import("@/features/tools/typescript/enum-genera
 const InterfaceBuilder = lazy(() => import("@/features/tools/typescript/interface-builder").then(m => ({ default: m.InterfaceBuilder })));
 const TsAstViewer = lazy(() => import("@/features/tools/typescript/ts-ast").then(m => ({ default: m.TsAstViewer })));
 
-const DecoratorPlayground = lazy(() => import("@/features/tools/nestjs/decorator-playground").then(m => ({ default: m.DecoratorPlayground })));
-const DtoGenerator = lazy(() => import("@/features/tools/nestjs/dto-generator").then(m => ({ default: m.DtoGenerator })));
-
 const AggregationBuilder = lazy(() => import("@/features/tools/mongodb/aggregation-builder").then(m => ({ default: m.AggregationBuilder })));
 const BsonJsonConverter = lazy(() => import("@/features/tools/mongodb/bson-json").then(m => ({ default: m.BsonJsonConverter })));
 const MongoFilterTester = lazy(() => import("@/features/tools/mongodb/mongo-filter-tester").then(m => ({ default: m.MongoFilterTester })));
+const ObjectIdGenerator = lazy(() => import("@/features/tools/mongodb/objectid-generator").then(m => ({ default: m.ObjectIdGenerator })));
 
 const SqlFormatter = lazy(() => import("@/features/tools/postgresql/sql-formatter").then(m => ({ default: m.SqlFormatter })));
 const UuidGenerator = lazy(() => import("@/features/tools/postgresql/uuid-generator").then(m => ({ default: m.UuidGenerator })));
@@ -67,7 +65,6 @@ const TimezoneConverter = lazy(() => import("@/features/tools/datetime/timezone-
 const ColorConverter = lazy(() => import("@/features/tools/colors/color-converter").then(m => ({ default: m.ColorConverter })));
 const GradientGenerator = lazy(() => import("@/features/tools/colors/gradient-generator").then(m => ({ default: m.GradientGenerator })));
 const RandomGenerator = lazy(() => import("@/features/tools/devutils/random-generator").then(m => ({ default: m.RandomGenerator })));
-const UuidTool = lazy(() => import("@/features/tools/devutils/uuid-tool").then(m => ({ default: m.UuidTool })));
 const NanoIdGenerator = lazy(() => import("@/features/tools/devutils/nanoid-generator").then(m => ({ default: m.NanoIdGenerator })));
 
 export const TOOL_COMPONENTS: Record<string, ComponentType> = {
@@ -91,10 +88,6 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "interface-builder": InterfaceBuilder,
   "ts-ast": TsAstViewer,
 
-  // NestJS
-  "decorator-playground": DecoratorPlayground,
-  "dto-generator": DtoGenerator,
-
   // PostgreSQL
   "sql-formatter": SqlFormatter,
   "uuid-generator": UuidGenerator,
@@ -102,6 +95,7 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "explain-visualizer": ExplainVisualizer,
 
   // MongoDB
+  "objectid-generator": ObjectIdGenerator,
   "aggregation-builder": AggregationBuilder,
   "bson-json": BsonJsonConverter,
   "mongo-filter-tester": MongoFilterTester,
@@ -143,7 +137,6 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
 
   // Dev Utils
   "random-generator": RandomGenerator,
-  "uuid-tool": UuidTool,
   "nanoid-generator": NanoIdGenerator,
 };
 
@@ -158,16 +151,11 @@ function ToolLoading() {
 const TOOL_EXAMPLES: Record<string, string> = {
   "type-generator": '{\n  "id": 101,\n  "name": "Alice",\n  "active": true\n}',
   "ts-formatter": "export const greet=(name:string)=>{return `Hello, ${name}`}",
-  "nest-module": "users\nauth\nbilling",
-  "nest-controller": "users\nGET /users\nPOST /users",
-  "nest-service": "UsersService\ncreateUser\nfindUserById",
-  "nest-crud": '{\n  "resource": "orders",\n  "fields": ["id", "status", "amount"]\n}',
-  "objectid-generator": "Generate MongoDB ObjectId values for test documents.",
+  "objectid-generator": "Count: 3",
   "objectid-parser": "507f1f77bcf86cd799439011",
   "mongo-query-builder": '{\n  "status": "active",\n  "age": { "$gte": 18 }\n}',
   "sql-to-typeorm": "CREATE TABLE users (id SERIAL PRIMARY KEY, email TEXT NOT NULL);",
   "sql-to-prisma": "CREATE TABLE orders (id SERIAL PRIMARY KEY, amount NUMERIC NOT NULL);",
-  "env-parser": "API_URL=https://api.example.com\nJWT_SECRET=secret123\nDEBUG=true",
   "env-json": "PORT=3000\nNODE_ENV=production\nFEATURE_FLAG=true",
   "jwt-generator": '{\n  "sub": "123",\n  "role": "admin"\n}',
   "hmac-generator": "message=order:12345\nsecret=my-secret-key",
@@ -182,18 +170,6 @@ function buildFallbackOutput(toolId: string, input: string): string {
         .replaceAll("{", "{\n  ")
         .replaceAll(";", ";\n")
         .replaceAll("=>{", "=> {\n  ")
-    case "nest-module": {
-      const modules = input.split("\n").map((m) => m.trim()).filter(Boolean)
-      return modules
-        .map((name) => `@Module({})\nexport class ${name.charAt(0).toUpperCase() + name.slice(1)}Module {}`)
-        .join("\n\n")
-    }
-    case "nest-controller":
-      return `@Controller('users')\nexport class UsersController {\n  @Get()\n  findAll() {\n    return 'List users';\n  }\n\n  @Post()\n  create() {\n    return 'Create user';\n  }\n}`
-    case "nest-service":
-      return `@Injectable()\nexport class UsersService {\n  createUser() {\n    return { ok: true };\n  }\n\n  findUserById(id: string) {\n    return { id };\n  }\n}`
-    case "nest-crud":
-      return `GET /orders\nGET /orders/:id\nPOST /orders\nPATCH /orders/:id\nDELETE /orders/:id`
     case "objectid-generator":
       return `507f1f77bcf86cd799439011\n507f1f77bcf86cd799439012\n507f1f77bcf86cd799439013`
     case "objectid-parser":
@@ -204,7 +180,6 @@ function buildFallbackOutput(toolId: string, input: string): string {
       return `@Entity("users")\nexport class User {\n  @PrimaryGeneratedColumn()\n  id: number\n\n  @Column()\n  email: string\n}`
     case "sql-to-prisma":
       return `model Order {\n  id     Int     @id @default(autoincrement())\n  amount Decimal\n}`
-    case "env-parser":
     case "env-json": {
       const pairs = input
         .split("\n")

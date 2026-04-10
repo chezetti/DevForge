@@ -10,12 +10,11 @@ import { decodeJwt } from '@/utils/security'
 
 export function JwtDecoder() {
   const tool = getToolById('jwt-decoder')!
-  const { getToolDraft, setToolDraft, autoRun } = useAppStore()
+  const { getToolDraft, setToolDraft } = useAppStore()
   const EXAMPLE =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NSIsIm5hbWUiOiJBbGljZSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcxMjY3ODQwMCwiZXhwIjoyMDcxODI0MDAwfQ.signature'
 
   const [input, setInput] = useState(EXAMPLE)
-  const [error, setError] = useState('')
 
   useEffect(() => {
     const draft = getToolDraft(tool.id)
@@ -23,19 +22,16 @@ export function JwtDecoder() {
     setInput(initial)
   }, [getToolDraft, tool.id])
 
-  const decoded = useMemo(() => {
+  const { decoded, error } = useMemo(() => {
     if (!input.trim()) {
-      setError('')
-      return null
+      return { decoded: null, error: '' }
     }
 
     try {
       const result = decodeJwt(input.trim())
-      setError('')
-      return result
+      return { decoded: result, error: '' }
     } catch (e) {
-      setError((e as Error).message)
-      return null
+      return { decoded: null, error: (e as Error).message }
     }
   }, [input])
 

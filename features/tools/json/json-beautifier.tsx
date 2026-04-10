@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-const JSON_BEAUTIFIER_EXAMPLE = `{"id":4360,"uniqid":"z7rkjcV2BV","paid":true,"created_at":"2019-07-30T12:50:03+03:00","client":{"id":235,"email":"username@gmail.com","phone":"+79100000000"}}`
+const JSON_BEAUTIFIER_EXAMPLE = `{"id":101,"profile":{"name":"Mila","email":"mila@example.com"},"meta":{"active":true,"tags":["core","beta"]}}`
 
 export function JsonBeautifier() {
   const tool = getToolById('json-beautifier')!

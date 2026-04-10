@@ -14,8 +14,8 @@ export function JsonToSql() {
   const tool = getToolById('json-to-sql')!
   const { getToolDraft, setToolDraft, addToolHistory, autoRun } = useAppStore()
   const EXAMPLE = `[
-  { "id": 1, "name": "Alice", "country": "DE", "active": true },
-  { "id": 2, "name": "Bob", "country": "US", "active": false }
+  { "id": 101, "profile": { "name": "Mila" }, "meta": { "active": true } },
+  { "id": 102, "profile": { "name": "Noah" }, "meta": { "active": false } }
 ]`
 
   const [input, setInput] = useState(EXAMPLE)

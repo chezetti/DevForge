@@ -146,10 +146,13 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'devforge-storage',
-      version: 2,
+      version: 3,
       migrate: (persistedState: any) => ({
         ...persistedState,
+        recentTools: [],
         toolHistory: [],
+        toolDrafts: {},
+        toolDraftsSecondary: {},
       }),
       partialize: (state) => ({
         recentTools: state.recentTools,

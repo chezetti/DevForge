@@ -15,23 +15,19 @@ import {
   ArrowRight,
   Sparkles,
   Braces,
-  Code,
   Database,
   Shield,
   Globe,
   Type,
   Calendar,
-  Palette,
   Wrench,
   FileCode2,
-  Blocks,
   Table as TableIcon,
 } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, typeof Braces> = {
   json: Braces,
   typescript: FileCode2,
-  nestjs: Blocks,
   mongodb: Database,
   postgresql: TableIcon,
   security: Shield,
@@ -234,22 +230,26 @@ export default function HomePage() {
               {TOOL_REGISTRY.map((category) => {
                 const Icon = CATEGORY_ICONS[category.slug] || Braces;
                 return (
-                  <Link
+                  <div
                     key={category.slug}
-                    href={`/tools#${category.slug}`}
                     className="block p-6 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
                   >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 rounded-md bg-muted">
-                        <Icon className="h-5 w-5" />
+                    <button
+                      onClick={() => router.push(`/tools#${category.slug}`)}
+                      className="w-full text-left"
+                    >
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-md bg-muted">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{category.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {category.tools.length} tools
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold">{category.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {category.tools.length} tools
-                        </p>
-                      </div>
-                    </div>
+                    </button>
                     <div className="flex flex-wrap gap-2">
                       {category.tools.slice(0, 4).map((tool) => (
                         <Link
@@ -267,7 +267,7 @@ export default function HomePage() {
                         </span>
                       )}
                     </div>
-                  </Link>
+                  </div>
                 );
               })}
             </div>
@@ -296,9 +296,17 @@ function ToolCard({ tool, onClick, onToggleFavorite }: ToolCardProps) {
   const isFavorite = favorites.includes(tool.id);
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className="group text-left p-4 rounded-lg border border-border bg-card hover:bg-muted/30 transition-all hover:border-primary/50"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      className="group text-left p-4 rounded-lg border border-border bg-card hover:bg-muted/30 transition-all hover:border-primary/50 cursor-pointer"
     >
       <div className="flex items-start justify-between mb-2">
         <h3 className="font-medium group-hover:text-primary transition-colors">
@@ -326,6 +334,6 @@ function ToolCard({ tool, onClick, onToggleFavorite }: ToolCardProps) {
           <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
         </div>
       </div>
-    </button>
+    </div>
   );
 }

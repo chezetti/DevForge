@@ -27,7 +27,6 @@ export function JsonDiff() {
 
   const [leftInput, setLeftInput] = useState(LEFT_EXAMPLE)
   const [rightInput, setRightInput] = useState(RIGHT_EXAMPLE)
-  const [error, setError] = useState('')
 
   useEffect(() => {
     const draft = getToolDraft(tool.id)
@@ -52,10 +51,10 @@ export function JsonDiff() {
     [setToolDraftSecondary, tool.id]
   )
 
-  const { leftFormatted, rightFormatted } = useMemo(() => {
+  const { leftFormatted, rightFormatted, error } = useMemo(() => {
     let left = ''
     let right = ''
-    setError('')
+    let nextError = ''
 
     if (leftInput.trim()) {
       const validation = validateJson(leftInput)
@@ -68,7 +67,7 @@ export function JsonDiff() {
       } else {
         left = leftInput
         if (!rightInput.trim() || validateJson(rightInput).valid) {
-          setError('Left input is not valid JSON')
+          nextError = 'Left input is not valid JSON'
         }
       }
     }
@@ -84,12 +83,12 @@ export function JsonDiff() {
       } else {
         right = rightInput
         if (!leftInput.trim() || validateJson(leftInput).valid) {
-          setError('Right input is not valid JSON')
+          nextError = 'Right input is not valid JSON'
         }
       }
     }
 
-    return { leftFormatted: left, rightFormatted: right }
+    return { leftFormatted: left, rightFormatted: right, error: nextError }
   }, [leftInput, rightInput])
 
   return (
