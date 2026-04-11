@@ -3,12 +3,12 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { ToolShell } from '@/components/tools/tool-shell'
 import { DualEditorPanel } from '@/components/tools/dual-editor-panel'
-import { OutputPanel } from '@/components/tools/output-panel'
 import { getToolById } from '@/config/tool-registry'
 import { useAppStore } from '@/store/app-store'
 import { validateJson, mergeJson, beautifyJson } from '@/utils/parsers/json'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 
 export function JsonMerge() {
   const tool = getToolById('json-merge')!
@@ -114,14 +114,32 @@ export function JsonMerge() {
           leftPlaceholder="Paste base JSON object here..."
           rightPlaceholder="Paste JSON object to merge..."
         />
-        <OutputPanel
-          value={result.output}
-          language="json"
-          title="Merged Result"
-          status={result.status}
-          errorMessage={result.errorMessage}
-          minHeight="300px"
-        />
+        <div className="flex flex-col border border-border rounded bg-background-secondary min-h-[300px]">
+          <div className="flex items-center gap-2 px-3 py-2 border-b border-border">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Merged Result
+            </span>
+            {result.status === 'success' && (
+              <CheckCircle2 className="h-3.5 w-3.5 text-success-foreground" />
+            )}
+            {result.status === 'error' && (
+              <AlertCircle className="h-3.5 w-3.5 text-destructive-foreground" />
+            )}
+          </div>
+          <div className="flex-1 min-h-[260px] overflow-auto p-4">
+            {result.status === 'error' ? (
+              <p className="text-sm text-destructive-foreground font-mono whitespace-pre-wrap">
+                {result.errorMessage}
+              </p>
+            ) : result.output ? (
+              <pre className="text-sm font-mono whitespace-pre-wrap break-words text-foreground">
+                {result.output}
+              </pre>
+            ) : (
+              <p className="text-sm text-muted-foreground">No output yet</p>
+            )}
+          </div>
+        </div>
       </div>
     </ToolShell>
   )
