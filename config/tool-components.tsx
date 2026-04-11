@@ -25,6 +25,7 @@ const TsToJs = lazy(() => import("@/features/tools/typescript/ts-to-js").then(m 
 const EnumGenerator = lazy(() => import("@/features/tools/typescript/enum-generator").then(m => ({ default: m.EnumGenerator })));
 const InterfaceBuilder = lazy(() => import("@/features/tools/typescript/interface-builder").then(m => ({ default: m.InterfaceBuilder })));
 const TsAstViewer = lazy(() => import("@/features/tools/typescript/ts-ast").then(m => ({ default: m.TsAstViewer })));
+const ZodToTs = lazy(() => import("@/features/tools/typescript/zod-to-ts").then(m => ({ default: m.ZodToTs })));
 
 const AggregationBuilder = lazy(() => import("@/features/tools/mongodb/aggregation-builder").then(m => ({ default: m.AggregationBuilder })));
 const BsonJsonConverter = lazy(() => import("@/features/tools/mongodb/bson-json").then(m => ({ default: m.BsonJsonConverter })));
@@ -55,6 +56,7 @@ const LoremGenerator = lazy(() => import("@/features/tools/text/lorem-generator"
 const RegexTester = lazy(() => import("@/features/tools/text/regex-tester").then(m => ({ default: m.RegexTester })));
 const SlugGenerator = lazy(() => import("@/features/tools/text/slug-generator").then(m => ({ default: m.SlugGenerator })));
 const StringEscapeTool = lazy(() => import("@/features/tools/text/string-escape").then(m => ({ default: m.StringEscapeTool })));
+const MarkdownPreview = lazy(() => import("@/features/tools/text/markdown-preview").then(m => ({ default: m.MarkdownPreview })));
 
 const TimestampConverter = lazy(() => import("@/features/tools/datetime/timestamp-converter").then(m => ({ default: m.TimestampConverter })));
 const DateCalculator = lazy(() => import("@/features/tools/datetime/date-calculator").then(m => ({ default: m.DateCalculator })));
@@ -66,6 +68,11 @@ const ColorConverter = lazy(() => import("@/features/tools/colors/color-converte
 const GradientGenerator = lazy(() => import("@/features/tools/colors/gradient-generator").then(m => ({ default: m.GradientGenerator })));
 const RandomGenerator = lazy(() => import("@/features/tools/devutils/random-generator").then(m => ({ default: m.RandomGenerator })));
 const NanoIdGenerator = lazy(() => import("@/features/tools/devutils/nanoid-generator").then(m => ({ default: m.NanoIdGenerator })));
+const GitignoreGenerator = lazy(() => import("@/features/tools/devutils/gitignore-generator").then(m => ({ default: m.GitignoreGenerator })));
+const DockerfileGenerator = lazy(() => import("@/features/tools/devutils/dockerfile-generator").then(m => ({ default: m.DockerfileGenerator })));
+const BorderRadiusPreview = lazy(() => import("@/features/tools/css/border-radius-preview").then(m => ({ default: m.BorderRadiusPreview })));
+const HtmlPreview = lazy(() => import("@/features/tools/html/html-preview").then(m => ({ default: m.HtmlPreview })));
+const UnitConverter = lazy(() => import("@/features/tools/converter/unit-converter").then(m => ({ default: m.UnitConverter })));
 
 export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   // JSON
@@ -87,6 +94,7 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "enum-generator": EnumGenerator,
   "interface-builder": InterfaceBuilder,
   "ts-ast": TsAstViewer,
+  "zod-to-ts": ZodToTs,
 
   // PostgreSQL
   "sql-formatter": SqlFormatter,
@@ -122,6 +130,7 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "regex-tester": RegexTester,
   "slug-generator": SlugGenerator,
   "string-escape": StringEscapeTool,
+  "markdown-preview": MarkdownPreview,
 
   // DateTime
   "timestamp-converter": TimestampConverter,
@@ -138,6 +147,17 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   // Dev Utils
   "random-generator": RandomGenerator,
   "nanoid-generator": NanoIdGenerator,
+  "gitignore-generator": GitignoreGenerator,
+  "dockerfile-generator": DockerfileGenerator,
+
+  // CSS
+  "border-radius-preview": BorderRadiusPreview,
+
+  // HTML
+  "html-preview": HtmlPreview,
+
+  // Converter
+  "unit-converter": UnitConverter,
 };
 
 function ToolLoading() {
