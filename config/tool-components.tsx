@@ -70,6 +70,10 @@ const RandomGenerator = lazy(() => import("@/features/tools/devutils/random-gene
 const NanoIdGenerator = lazy(() => import("@/features/tools/devutils/nanoid-generator").then(m => ({ default: m.NanoIdGenerator })));
 const GitignoreGenerator = lazy(() => import("@/features/tools/devutils/gitignore-generator").then(m => ({ default: m.GitignoreGenerator })));
 const DockerfileGenerator = lazy(() => import("@/features/tools/devutils/dockerfile-generator").then(m => ({ default: m.DockerfileGenerator })));
+const ChmodCalculator = lazy(() => import("@/features/tools/devutils/chmod-calculator").then(m => ({ default: m.ChmodCalculator })));
+const BoxShadowGenerator = lazy(() => import("@/features/tools/css/box-shadow-generator").then(m => ({ default: m.BoxShadowGenerator })));
+const CssGridGenerator = lazy(() => import("@/features/tools/css/css-grid-generator").then(m => ({ default: m.CssGridGenerator })));
+const FlexboxGenerator = lazy(() => import("@/features/tools/css/flexbox-generator").then(m => ({ default: m.FlexboxGenerator })));
 const BorderRadiusPreview = lazy(() => import("@/features/tools/css/border-radius-preview").then(m => ({ default: m.BorderRadiusPreview })));
 const HtmlPreview = lazy(() => import("@/features/tools/html/html-preview").then(m => ({ default: m.HtmlPreview })));
 const UnitConverter = lazy(() => import("@/features/tools/converter/unit-converter").then(m => ({ default: m.UnitConverter })));
@@ -149,8 +153,12 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "nanoid-generator": NanoIdGenerator,
   "gitignore-generator": GitignoreGenerator,
   "dockerfile-generator": DockerfileGenerator,
+  "chmod-calculator": ChmodCalculator,
 
   // CSS
+  "box-shadow-generator": BoxShadowGenerator,
+  "css-grid-generator": CssGridGenerator,
+  "flexbox-generator": FlexboxGenerator,
   "border-radius-preview": BorderRadiusPreview,
 
   // HTML

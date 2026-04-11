@@ -76,7 +76,7 @@ export function ZodToTs() {
         <EditorPanel
           value={input}
           onChange={setInput}
-          language="typescript"
+          language="plaintext"
           title="Input (Zod Schema)"
           minHeight="360px"
         />
@@ -89,7 +89,7 @@ export function ZodToTs() {
           />
           <OutputPanel
             value={output}
-            language="typescript"
+            language="plaintext"
             title="Output (TypeScript)"
             status={output ? 'success' : 'idle'}
             minHeight="312px"
