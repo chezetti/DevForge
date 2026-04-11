@@ -25,15 +25,17 @@ export function JsonMerge() {
   "timezone": "Europe/Berlin"
 }`
 
-  const [leftInput, setLeftInput] = useState(LEFT_EXAMPLE)
-  const [rightInput, setRightInput] = useState(RIGHT_EXAMPLE)
+  const [leftInput, setLeftInput] = useState('')
+  const [rightInput, setRightInput] = useState('')
   const [deepMerge, setDeepMerge] = useState(true)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const draft = getToolDraft(tool.id)
     const draftSecondary = getToolDraftSecondary(tool.id)
     setLeftInput(draft || LEFT_EXAMPLE)
     setRightInput(draftSecondary || RIGHT_EXAMPLE)
+    setReady(true)
   }, [getToolDraft, getToolDraftSecondary, tool.id])
 
   const handleLeftChange = useCallback(
@@ -53,6 +55,9 @@ export function JsonMerge() {
   )
 
   const result = useMemo(() => {
+    if (!ready) {
+      return { output: '', status: 'idle' as const, errorMessage: '' }
+    }
     if (!leftInput.trim() || !rightInput.trim()) {
       return { output: '', status: 'idle' as const, errorMessage: '' }
     }
@@ -80,7 +85,7 @@ export function JsonMerge() {
     } catch (e) {
       return { output: '', status: 'error' as const, errorMessage: (e as Error).message }
     }
-  }, [leftInput, rightInput, deepMerge])
+  }, [leftInput, rightInput, deepMerge, ready])
 
   return (
     <ToolShell

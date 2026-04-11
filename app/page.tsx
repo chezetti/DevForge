@@ -23,6 +23,9 @@ import {
   Wrench,
   FileCode2,
   Table as TableIcon,
+  Palette,
+  Code,
+  ArrowLeftRight,
 } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, typeof Braces> = {
@@ -35,6 +38,9 @@ const CATEGORY_ICONS: Record<string, typeof Braces> = {
   string: Type,
   datetime: Calendar,
   devutils: Wrench,
+  css: Palette,
+  html: Code,
+  converter: ArrowLeftRight,
 };
 
 type ExtendedTool = Tool & { categorySlug: ToolCategory; categoryName: string };
@@ -104,25 +110,25 @@ export default function HomePage() {
   return (
     <AppShell>
       <div className="flex-1 overflow-auto">
-        <div className="max-w-6xl mx-auto px-4 py-8 md:py-12">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12">
           {/* Hero Section */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-balance">
+          <div className="text-center mb-8 sm:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-4 text-balance">
               Developer Tools
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
               A comprehensive collection of tools for developers. Format, validate,
               convert, and generate code with ease.
             </p>
 
             {/* Search */}
-            <div className="relative max-w-xl mx-auto mt-8">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <div className="relative max-w-xl mx-auto mt-6 sm:mt-8">
+              <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-muted-foreground" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search tools... (or press Cmd+K)"
-                className="pl-12 h-12 text-base"
+                placeholder="Search tools... (Ctrl+K)"
+                className="pl-10 sm:pl-12 h-10 sm:h-12 text-sm sm:text-base"
               />
 
               {/* Search Results Dropdown */}
@@ -146,33 +152,33 @@ export default function HomePage() {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
-              <p className="text-3xl font-bold">{allTools.length}</p>
-              <p className="text-sm text-muted-foreground">Total Tools</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-8 sm:mb-12">
+            <div className="p-3 sm:p-4 rounded-lg bg-muted/30 border border-border text-center">
+              <p className="text-2xl sm:text-3xl font-bold">{allTools.length}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Total Tools</p>
             </div>
-            <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
-              <p className="text-3xl font-bold">{TOOL_REGISTRY.length}</p>
-              <p className="text-sm text-muted-foreground">Categories</p>
+            <div className="p-3 sm:p-4 rounded-lg bg-muted/30 border border-border text-center">
+              <p className="text-2xl sm:text-3xl font-bold">{TOOL_REGISTRY.length}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Categories</p>
             </div>
-            <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
-              <p className="text-3xl font-bold">{favorites.length}</p>
-              <p className="text-sm text-muted-foreground">Favorites</p>
+            <div className="p-3 sm:p-4 rounded-lg bg-muted/30 border border-border text-center">
+              <p className="text-2xl sm:text-3xl font-bold">{favorites.length}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Favorites</p>
             </div>
-            <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
-              <p className="text-3xl font-bold">{recentTools.length}</p>
-              <p className="text-sm text-muted-foreground">Recently Used</p>
+            <div className="p-3 sm:p-4 rounded-lg bg-muted/30 border border-border text-center">
+              <p className="text-2xl sm:text-3xl font-bold">{recentTools.length}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Recently Used</p>
             </div>
           </div>
 
           {/* Favorites Section */}
           {favoriteToolsData.length > 0 && (
-            <section className="mb-12">
-              <div className="flex items-center gap-2 mb-4">
+            <section className="mb-8 sm:mb-12">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                <h2 className="text-xl font-semibold">Favorites</h2>
+                <h2 className="text-lg sm:text-xl font-semibold">Favorites</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {favoriteToolsData.map((tool) => (
                   <ToolCard
                     key={tool.id}
@@ -187,12 +193,12 @@ export default function HomePage() {
 
           {/* Recent Tools Section */}
           {recentToolsData.length > 0 && (
-            <section className="mb-12">
-              <div className="flex items-center gap-2 mb-4">
+            <section className="mb-8 sm:mb-12">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <Clock className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-semibold">Recently Used</h2>
+                <h2 className="text-lg sm:text-xl font-semibold">Recently Used</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {recentToolsData.map((tool) => (
                   <ToolCard
                     key={tool.id}
@@ -206,12 +212,12 @@ export default function HomePage() {
           )}
 
           {/* Featured Tools Section */}
-          <section className="mb-12">
-            <div className="flex items-center gap-2 mb-4">
+          <section className="mb-8 sm:mb-12">
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
               <Sparkles className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-semibold">Featured Tools</h2>
+              <h2 className="text-lg sm:text-xl font-semibold">Featured Tools</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {featuredToolsData.map((tool) => (
                 <ToolCard
                   key={tool.id}
@@ -225,20 +231,20 @@ export default function HomePage() {
 
           {/* All Categories */}
           <section>
-            <h2 className="text-xl font-semibold mb-4">Browse by Category</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Browse by Category</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
               {TOOL_REGISTRY.map((category) => {
                 const Icon = CATEGORY_ICONS[category.slug] || Braces;
                 return (
                   <div
                     key={category.slug}
-                    className="block p-6 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
+                    className="block p-4 sm:p-6 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
                   >
                     <button
                       onClick={() => router.push(`/tools#${category.slug}`)}
                       className="w-full text-left"
                     >
-                      <div className="flex items-center gap-3 mb-4">
+                      <div className="flex items-center gap-3 mb-3 sm:mb-4">
                         <div className="p-2 rounded-md bg-muted">
                           <Icon className="h-5 w-5" />
                         </div>
@@ -274,7 +280,7 @@ export default function HomePage() {
           </section>
 
           {/* Footer */}
-          <footer className="mt-16 pt-8 border-t border-border text-center text-sm text-muted-foreground">
+          <footer className="mt-10 sm:mt-16 pt-6 sm:pt-8 border-t border-border text-center text-xs sm:text-sm text-muted-foreground">
             <p>Built with Next.js, Tailwind CSS, and shadcn/ui</p>
             <p className="mt-1">All processing happens locally in your browser</p>
           </footer>

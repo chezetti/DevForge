@@ -150,3 +150,44 @@ input[type='number']::-webkit-inner-spin-button,
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+/* Mobile responsive overrides */
+@media (max-width: 767px) {
+  .tool-content [class*='lg:grid-cols-2'],
+  .tool-content [class*='grid-cols-2'] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .monaco-editor .margin {
+    width: 30px !important;
+  }
+
+  .tool-content .min-h-\[220px\] {
+    min-height: 180px !important;
+  }
+
+  .tool-content .min-h-\[300px\] {
+    min-height: 200px !important;
+  }
+}
+
+/* Touch-friendly interactive elements on mobile */
+@media (hover: none) and (pointer: coarse) {
+  button, [role="button"], a {
+    min-height: 36px;
+    min-width: 36px;
+  }
+
+  .tool-content button,
+  .tool-content [role="button"] {
+    min-height: 32px;
+  }
+}
+
+/* Fix command palette on mobile to be full width */
+@media (max-width: 639px) {
+  [data-slot="dialog-content"].sm\:max-w-2xl {
+    max-width: calc(100vw - 1rem) !important;
+    margin: 0.5rem;
+  }
+}

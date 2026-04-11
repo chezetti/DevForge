@@ -12,6 +12,9 @@ import {
   Clock,
   Type,
   Wrench,
+  Palette,
+  Code,
+  ArrowLeftRight,
 } from 'lucide-react'
 import {
   CommandDialog,
@@ -40,6 +43,9 @@ const categoryIcons: Record<ToolCategory, React.ReactNode> = {
   datetime: <Clock className="h-4 w-4" />,
   string: <Type className="h-4 w-4" />,
   devutils: <Wrench className="h-4 w-4" />,
+  css: <Palette className="h-4 w-4" />,
+  html: <Code className="h-4 w-4" />,
+  converter: <ArrowLeftRight className="h-4 w-4" />,
 }
 
 export function CommandPalette() {

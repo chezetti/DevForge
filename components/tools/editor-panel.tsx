@@ -111,14 +111,14 @@ export function EditorPanel({
   return (
     <div className={`flex flex-col h-full min-h-0 border border-border rounded bg-background-secondary ${className}`}>
       {(title || showToolbar) && (
-        <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+        <div className="flex items-center justify-between px-2 sm:px-3 py-1.5 sm:py-2 border-b border-border">
           {title && (
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               {title}
             </span>
           )}
           {showToolbar && (
-            <div className="flex items-center gap-1 ml-auto">
+            <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
               {onFormat && !readOnly && (
                 <Button
                   variant="ghost"
