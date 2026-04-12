@@ -184,10 +184,3 @@ input[type='number']::-webkit-inner-spin-button,
   }
 }
 
-/* Fix command palette on mobile to be full width */
-@media (max-width: 639px) {
-  [data-slot="dialog-content"].sm\:max-w-2xl {
-    max-width: calc(100vw - 1rem) !important;
-    margin: 0.5rem;
-  }
-}

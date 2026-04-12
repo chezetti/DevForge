@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Search, Command } from 'lucide-react'
+import { Menu, Search, Command } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Input } from '@/components/ui/input'
@@ -43,16 +43,8 @@ export function MobileNav() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[280px] bg-sidebar p-0">
-            <div className="flex items-center justify-between p-4 border-b border-border">
+            <div className="flex items-center p-4 pr-12 border-b border-border">
               <span className="font-semibold">DevForge</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setOpen(false)}
-                className="h-8 w-8"
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </div>
             <div className="p-3">
               <div className="relative">
@@ -120,7 +112,7 @@ export function MobileNav() {
             </nav>
           </SheetContent>
         </Sheet>
-        <Link href="/" className="font-semibold">
+        <Link href="/" className="font-semibold leading-none h-8 flex items-center">
           DevForge
         </Link>
       </div>

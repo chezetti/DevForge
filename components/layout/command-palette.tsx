@@ -92,7 +92,7 @@ export function CommandPalette() {
       open={commandPaletteOpen}
       onOpenChange={setCommandPaletteOpen}
       showCloseButton={false}
-      className="sm:max-w-2xl"
+      className="w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] sm:max-w-2xl"
     >
       <CommandInput
         placeholder="Search tools..."

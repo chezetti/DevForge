@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   title: 'DevForge - Developer Tools',
   description: 'A fast, developer-first toolbox with utilities for JSON, TypeScript, SQL, encoding, and more.',
   keywords: ['developer tools', 'JSON', 'TypeScript', 'formatter', 'encoder', 'decoder'],
+  icons: {
+    icon: '/devforge-logo.svg',
+    shortcut: '/devforge-logo.svg',
+    apple: '/apple-icon.png',
+  },
 }
 
 export const viewport: Viewport = {
