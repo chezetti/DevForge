@@ -6,6 +6,51 @@ function normalizeUrl(value: string): string {
   return value.trim()
 }
 
+function isInstagramUrl(url: string): boolean {
+  return /instagram\.com\/(reel|p)\//i.test(url)
+}
+
+function toEmbedUrl(url: string): string {
+  return `${url.replace(/\/+$/, '')}/embed/captioned/`
+}
+
+function decodeEscapedUrl(value: string): string {
+  try {
+    return JSON.parse(`"${value}"`)
+  } catch {
+    return value.replace(/\\\//g, '/')
+  }
+}
+
+function extractField(html: string, field: string): string | null {
+  const plain = new RegExp(`"${field}":"(.*?)"`)
+  const escaped = new RegExp(`\\\\\\"${field}\\\\\\":\\\\\\"(.*?)\\\\\\"`)
+  return plain.exec(html)?.[1] ?? escaped.exec(html)?.[1] ?? null
+}
+
+function isYoutubeUrl(url: string): boolean {
+  return /(youtube\.com|youtu\.be)/i.test(url)
+}
+
+function buildYoutubeFallback(url: string, type: MediaType) {
+  if (!isYoutubeUrl(url)) {
+    return {
+      ok: false as const,
+      error: 'Not a YouTube URL.',
+    }
+  }
+
+  const format = type === 'youtube-mp3' ? 'mp3' : '720'
+  const downloadUrl = `https://p.savenow.to/api/button/?url=${encodeURIComponent(url)}&f=${format}`
+
+  return {
+    ok: true as const,
+    downloadUrl,
+    title: type === 'youtube-mp3' ? 'youtube-audio' : 'youtube-video',
+    source: 'savenow-button',
+  }
+}
+
 function buildPayload(url: string, type: MediaType) {
   if (type === 'youtube-mp3') {
     return {
@@ -51,6 +96,107 @@ function extractDownloadUrl(data: any): string | null {
   return null
 }
 
+async function tryCobalt(url: string, type: MediaType) {
+  const payload = buildPayload(url, type)
+  const endpoints = [
+    process.env.MEDIA_API_URL?.trim(),
+    'https://downloadapi.stuff.solutions/api/json',
+    'https://co.wuk.sh/api/json',
+  ].filter(Boolean) as string[]
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(payload),
+        cache: 'no-store',
+      })
+
+      if (!response.ok) {
+        continue
+      }
+
+      const data = await response.json()
+      const downloadUrl = extractDownloadUrl(data)
+      if (!downloadUrl) continue
+
+      const title =
+        (typeof data.filename === 'string' && data.filename) ||
+        (typeof data.title === 'string' && data.title) ||
+        'media-file'
+
+      return {
+        ok: true as const,
+        downloadUrl,
+        title,
+        source: data?.source ?? endpoint,
+      }
+    } catch {
+      continue
+    }
+  }
+
+  return {
+    ok: false as const,
+    error: 'Failed to resolve media stream from configured providers.',
+  }
+}
+
+async function tryInstagramEmbed(url: string) {
+  if (!isInstagramUrl(url)) {
+    return {
+      ok: false as const,
+      error: 'Not an Instagram reel/post URL.',
+    }
+  }
+
+  try {
+    const response = await fetch(toEmbedUrl(url), {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      return {
+        ok: false as const,
+        error: `Instagram embed request failed (${response.status}).`,
+      }
+    }
+
+    const html = await response.text()
+    const videoValue = extractField(html, 'video_url')
+    if (!videoValue) {
+      return {
+        ok: false as const,
+        error: 'Instagram video URL not found in embed page.',
+      }
+    }
+
+    const title = decodeEscapedUrl(extractField(html, 'title') || 'instagram-video')
+    const downloadUrl = decodeEscapedUrl(videoValue)
+
+    return {
+      ok: true as const,
+      downloadUrl,
+      title,
+      source: 'instagram-embed',
+    }
+  } catch {
+    return {
+      ok: false as const,
+      error: 'Instagram embed fallback failed.',
+    }
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -65,44 +211,46 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unsupported media type' }, { status: 400 })
     }
 
-    const payload = buildPayload(url, type)
-    const response = await fetch('https://co.wuk.sh/api/json', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(payload),
-      cache: 'no-store',
-    })
-
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: 'Failed to resolve media URL. Try another link.' },
-        { status: response.status }
-      )
+    const primary = await tryCobalt(url, type)
+    if (primary.ok) {
+      return NextResponse.json({
+        downloadUrl: primary.downloadUrl,
+        title: primary.title,
+        source: primary.source,
+        type,
+      })
     }
 
-    const data = await response.json()
-    const downloadUrl = extractDownloadUrl(data)
-    if (!downloadUrl) {
+    if (type === 'instagram-video') {
+      const instagramFallback = await tryInstagramEmbed(url)
+      if (instagramFallback.ok) {
+        return NextResponse.json({
+          downloadUrl: instagramFallback.downloadUrl,
+          title: instagramFallback.title,
+          source: instagramFallback.source,
+          type,
+        })
+      }
+
       return NextResponse.json(
-        { error: 'No downloadable stream found for this link.' },
+        { error: instagramFallback.error || primary.error },
         { status: 422 }
       )
     }
 
-    const title =
-      (typeof data.filename === 'string' && data.filename) ||
-      (typeof data.title === 'string' && data.title) ||
-      'media-file'
+    if (type === 'youtube-video' || type === 'youtube-mp3') {
+      const youtubeFallback = buildYoutubeFallback(url, type)
+      if (youtubeFallback.ok) {
+        return NextResponse.json({
+          downloadUrl: youtubeFallback.downloadUrl,
+          title: youtubeFallback.title,
+          source: youtubeFallback.source,
+          type,
+        })
+      }
+    }
 
-    return NextResponse.json({
-      downloadUrl,
-      title,
-      source: data?.source ?? null,
-      type,
-    })
+    return NextResponse.json({ error: primary.error }, { status: 502 })
   } catch {
     return NextResponse.json(
       { error: 'Unable to process this URL right now.' },
