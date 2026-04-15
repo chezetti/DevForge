@@ -9,6 +9,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
     "@hookform/resolvers": "^3.9.1",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-accordion": "1.2.12",

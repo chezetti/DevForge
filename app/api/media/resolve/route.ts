@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import ytdl from '@distube/ytdl-core'
 
 type MediaType = 'youtube-video' | 'instagram-video' | 'youtube-mp3'
 
@@ -32,22 +33,160 @@ function isYoutubeUrl(url: string): boolean {
   return /(youtube\.com|youtu\.be)/i.test(url)
 }
 
-function buildYoutubeFallback(url: string, type: MediaType) {
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function trySaveNowYoutube(url: string, type: MediaType) {
   if (!isYoutubeUrl(url)) {
     return {
       ok: false as const,
-      error: 'Not a YouTube URL.',
+      error: 'Invalid YouTube URL.',
     }
   }
 
   const format = type === 'youtube-mp3' ? 'mp3' : '720'
-  const downloadUrl = `https://p.savenow.to/api/button/?url=${encodeURIComponent(url)}&f=${format}`
+  const initUrl = `https://p.savenow.to/ajax/download.php?button=1&start=1&end=1&format=${encodeURIComponent(
+    format
+  )}&url=${encodeURIComponent(url)}`
 
-  return {
-    ok: true as const,
-    downloadUrl,
-    title: type === 'youtube-mp3' ? 'youtube-audio' : 'youtube-video',
-    source: 'savenow-button',
+  try {
+    const initRes = await fetch(initUrl, {
+      headers: {
+        Accept: 'application/json',
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      },
+      cache: 'no-store',
+    })
+
+    if (!initRes.ok) {
+      return {
+        ok: false as const,
+        error: 'YouTube provider initialization failed.',
+      }
+    }
+
+    const initData = await initRes.json()
+    const id = typeof initData?.id === 'string' ? initData.id : ''
+    if (!id) {
+      return {
+        ok: false as const,
+        error: 'YouTube provider did not return job id.',
+      }
+    }
+
+    for (let i = 0; i < 45; i++) {
+      await sleep(1000)
+      const progressRes = await fetch(`https://p.savenow.to/api/progress?id=${encodeURIComponent(id)}`, {
+        headers: {
+          Accept: 'application/json',
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        },
+        cache: 'no-store',
+      })
+
+      if (!progressRes.ok) continue
+      const progressData = await progressRes.json()
+      if (typeof progressData?.download_url === 'string' && progressData.download_url) {
+        return {
+          ok: true as const,
+          downloadUrl: progressData.download_url,
+          title: type === 'youtube-mp3' ? 'youtube-audio' : 'youtube-video',
+          source: 'savenow-direct',
+        }
+      }
+    }
+
+    return {
+      ok: false as const,
+      error: 'YouTube direct stream was not ready in time.',
+    }
+  } catch {
+    return {
+      ok: false as const,
+      error: 'YouTube provider request failed.',
+    }
+  }
+}
+
+async function tryYoutubeDirect(url: string, type: MediaType) {
+  if (!isYoutubeUrl(url) || !ytdl.validateURL(url)) {
+    return {
+      ok: false as const,
+      error: 'Invalid YouTube URL.',
+    }
+  }
+
+  try {
+    const info = await ytdl.getInfo(url)
+    const formats = info.formats
+
+    if (type === 'youtube-video') {
+      const candidates = formats
+        .filter((f) => f.hasVideo && f.hasAudio && f.url)
+        .sort((a, b) => {
+          const heightDiff = (b.height || 0) - (a.height || 0)
+          if (heightDiff !== 0) return heightDiff
+          return (b.bitrate || 0) - (a.bitrate || 0)
+        })
+
+      const preferred =
+        candidates.find((f) => f.container === 'mp4') ??
+        candidates[0]
+
+      if (!preferred?.url) {
+        return {
+          ok: false as const,
+          error: 'No downloadable YouTube video stream found.',
+        }
+      }
+
+      return {
+        ok: true as const,
+        downloadUrl: preferred.url,
+        title: info.videoDetails?.title || 'youtube-video',
+        source: 'youtube-direct',
+      }
+    }
+
+    const audioCandidates = formats
+      .filter((f) => f.hasAudio && !f.hasVideo && f.url)
+      .sort((a, b) => {
+        const score = (f: typeof a) => {
+          const mime = f.mimeType || ''
+          const codecScore = mime.includes('audio/mpeg')
+            ? 3
+            : mime.includes('audio/mp4')
+              ? 2
+              : mime.includes('audio/webm')
+                ? 1
+                : 0
+          return codecScore * 1000 + (f.audioBitrate || 0)
+        }
+        return score(b) - score(a)
+      })
+
+    const preferred = audioCandidates[0]
+    if (!preferred?.url) {
+      return {
+        ok: false as const,
+        error: 'No downloadable YouTube audio stream found.',
+      }
+    }
+
+    return {
+      ok: true as const,
+      downloadUrl: preferred.url,
+      title: info.videoDetails?.title || 'youtube-audio',
+      source: 'youtube-audio-direct',
+    }
+  } catch {
+    return {
+      ok: false as const,
+      error: 'YouTube extraction failed for this video.',
+    }
   }
 }
 
@@ -211,6 +350,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unsupported media type' }, { status: 400 })
     }
 
+    if (type === 'youtube-video' || type === 'youtube-mp3') {
+      const youtubeFromProvider = await trySaveNowYoutube(url, type)
+      if (youtubeFromProvider.ok) {
+        return NextResponse.json({
+          downloadUrl: youtubeFromProvider.downloadUrl,
+          title: youtubeFromProvider.title,
+          source: youtubeFromProvider.source,
+          type,
+          isDirect: true,
+        })
+      }
+
+      const youtubeDirect = await tryYoutubeDirect(url, type)
+      if (youtubeDirect.ok) {
+        return NextResponse.json({
+          downloadUrl: youtubeDirect.downloadUrl,
+          title: youtubeDirect.title,
+          source: youtubeDirect.source,
+          type,
+          isDirect: true,
+        })
+      }
+    }
+
     const primary = await tryCobalt(url, type)
     if (primary.ok) {
       return NextResponse.json({
@@ -218,6 +381,7 @@ export async function POST(request: NextRequest) {
         title: primary.title,
         source: primary.source,
         type,
+        isDirect: true,
       })
     }
 
@@ -229,6 +393,7 @@ export async function POST(request: NextRequest) {
           title: instagramFallback.title,
           source: instagramFallback.source,
           type,
+          isDirect: true,
         })
       }
 
@@ -236,18 +401,6 @@ export async function POST(request: NextRequest) {
         { error: instagramFallback.error || primary.error },
         { status: 422 }
       )
-    }
-
-    if (type === 'youtube-video' || type === 'youtube-mp3') {
-      const youtubeFallback = buildYoutubeFallback(url, type)
-      if (youtubeFallback.ok) {
-        return NextResponse.json({
-          downloadUrl: youtubeFallback.downloadUrl,
-          title: youtubeFallback.title,
-          source: youtubeFallback.source,
-          type,
-        })
-      }
     }
 
     return NextResponse.json({ error: primary.error }, { status: 502 })

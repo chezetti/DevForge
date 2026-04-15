@@ -28,6 +28,7 @@ export function MediaDownloaderBase({
   const [downloadUrl, setDownloadUrl] = useState('')
   const [title, setTitle] = useState('')
   const [source, setSource] = useState('')
+  const [isDirect, setIsDirect] = useState(false)
   const [error, setError] = useState('')
 
   const extractYoutubeId = useCallback((value: string) => {
@@ -52,6 +53,7 @@ export function MediaDownloaderBase({
     setDownloadUrl('')
     setTitle('')
     setSource('')
+    setIsDirect(false)
 
     try {
       const res = await fetch('/api/media/resolve', {
@@ -68,6 +70,7 @@ export function MediaDownloaderBase({
       setDownloadUrl(data.downloadUrl || '')
       setTitle(data.title || '')
       setSource(data.source || '')
+      setIsDirect(Boolean(data.isDirect))
     } catch {
       setError('Request failed. Please try again.')
     } finally {
@@ -77,15 +80,25 @@ export function MediaDownloaderBase({
 
   const isDirectMediaUrl = useMemo(() => {
     if (!downloadUrl) return false
+    if (!isDirect) return false
     if (/\.(mp4|webm|mov|m4v|mp3|wav|ogg|m4a|aac)(\?|$)/i.test(downloadUrl)) return true
     if (source === 'instagram-embed') return true
+    if (source === 'youtube-direct' || source === 'youtube-audio-direct') return true
+    if (source === 'savenow-direct') return true
     return false
-  }, [downloadUrl, source])
+  }, [downloadUrl, isDirect, source])
 
   const youtubePreviewUrl = useMemo(() => {
     const id = extractYoutubeId(url)
     return id ? `https://www.youtube.com/embed/${id}` : ''
   }, [extractYoutubeId, url])
+
+  const downloadProxyUrl = useMemo(() => {
+    if (!downloadUrl || !isDirectMediaUrl) return ''
+    return `/api/media/download?url=${encodeURIComponent(downloadUrl)}&title=${encodeURIComponent(
+      title || 'media-file'
+    )}&type=${encodeURIComponent(mediaType)}`
+  }, [downloadUrl, isDirectMediaUrl, mediaType, title])
 
   const canRenderAudio = useMemo(() => {
     if (!isDirectMediaUrl) return false
@@ -127,7 +140,7 @@ export function MediaDownloaderBase({
             </Button>
             {downloadUrl && (
               <Button asChild>
-                <a href={downloadUrl} target="_blank" rel="noreferrer">
+                <a href={downloadProxyUrl || downloadUrl}>
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </a>
@@ -168,7 +181,7 @@ export function MediaDownloaderBase({
                 allowFullScreen
               />
               <p className="text-xs text-muted-foreground">
-                Direct media stream is unavailable from source provider, so preview shows the original YouTube video.
+                Direct stream is unavailable, so preview shows the source video.
               </p>
             </div>
           )}
