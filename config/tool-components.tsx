@@ -77,6 +77,9 @@ const FlexboxGenerator = lazy(() => import("@/features/tools/css/flexbox-generat
 const BorderRadiusPreview = lazy(() => import("@/features/tools/css/border-radius-preview").then(m => ({ default: m.BorderRadiusPreview })));
 const HtmlPreview = lazy(() => import("@/features/tools/html/html-preview").then(m => ({ default: m.HtmlPreview })));
 const UnitConverter = lazy(() => import("@/features/tools/converter/unit-converter").then(m => ({ default: m.UnitConverter })));
+const YouTubeDownloader = lazy(() => import("@/features/tools/media/youtube-downloader").then(m => ({ default: m.YouTubeDownloader })));
+const InstagramDownloader = lazy(() => import("@/features/tools/media/instagram-downloader").then(m => ({ default: m.InstagramDownloader })));
+const YouTubeToMp3 = lazy(() => import("@/features/tools/media/youtube-to-mp3").then(m => ({ default: m.YouTubeToMp3 })));
 
 export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   // JSON
@@ -166,6 +169,11 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
 
   // Converter
   "unit-converter": UnitConverter,
+
+  // Media
+  "youtube-downloader": YouTubeDownloader,
+  "instagram-downloader": InstagramDownloader,
+  "youtube-to-mp3": YouTubeToMp3,
 };
 
 function ToolLoading() {
@@ -230,6 +238,9 @@ const TOOL_EXAMPLES: Record<string, string> = {
   "unit-converter": "100 kg",
   "morse-code": "HELLO WORLD",
   "roman-numeral": "2024",
+  "youtube-downloader": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "instagram-downloader": "https://www.instagram.com/reel/C5m7_demo/",
+  "youtube-to-mp3": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 }
 
 function buildFallbackOutput(toolId: string, input: string): string {

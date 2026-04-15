@@ -26,6 +26,7 @@ import {
   Palette,
   Code,
   ArrowLeftRight,
+  Film,
 } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, typeof Braces> = {
@@ -41,6 +42,7 @@ const CATEGORY_ICONS: Record<string, typeof Braces> = {
   css: Palette,
   html: Code,
   converter: ArrowLeftRight,
+  media: Film,
 };
 
 type ExtendedTool = Tool & { categorySlug: ToolCategory; categoryName: string };

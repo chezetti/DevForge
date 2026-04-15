@@ -16,6 +16,7 @@ import {
   Palette,
   Code,
   ArrowLeftRight,
+  Film,
   ChevronRight,
   Search,
 } from 'lucide-react'
@@ -43,6 +44,7 @@ const categoryIcons: Record<ToolCategory, React.ReactNode> = {
   css: <Palette className="h-4 w-4" />,
   html: <Code className="h-4 w-4" />,
   converter: <ArrowLeftRight className="h-4 w-4" />,
+  media: <Film className="h-4 w-4" />,
 }
 
 export function Sidebar() {

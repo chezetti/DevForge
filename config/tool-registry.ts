@@ -11,6 +11,7 @@ export type ToolCategory =
   | 'css'
   | 'html'
   | 'converter'
+  | 'media'
 
 export interface ToolMetadata {
   id: string
@@ -40,6 +41,7 @@ export const categoryLabels: Record<ToolCategory, string> = {
   css: 'CSS',
   html: 'HTML / Markup',
   converter: 'Converters',
+  media: 'Media',
 }
 
 export const categoryIcons: Record<ToolCategory, string> = {
@@ -55,6 +57,7 @@ export const categoryIcons: Record<ToolCategory, string> = {
   css: 'Palette',
   html: 'Code',
   converter: 'ArrowLeftRight',
+  media: 'Film',
 }
 
 export const tools: ToolMetadata[] = [
@@ -1490,6 +1493,50 @@ export const tools: ToolMetadata[] = [
     inputType: 'text',
     outputType: 'text',
     supportsLiveTransform: true,
+    supportsFileUpload: false,
+    supportsHistory: true,
+    supportsShare: true,
+    implemented: true,
+  },
+
+  // Media Tools
+  {
+    id: 'youtube-downloader',
+    title: 'YouTube Video Downloader',
+    category: 'media',
+    description: 'Get direct download link for YouTube videos',
+    keywords: ['youtube', 'download', 'video', 'mp4'],
+    inputType: 'form',
+    outputType: 'text',
+    supportsLiveTransform: false,
+    supportsFileUpload: false,
+    supportsHistory: true,
+    supportsShare: true,
+    implemented: true,
+  },
+  {
+    id: 'instagram-downloader',
+    title: 'Instagram Video Downloader',
+    category: 'media',
+    description: 'Get direct download link for Instagram videos/reels',
+    keywords: ['instagram', 'reel', 'download', 'video'],
+    inputType: 'form',
+    outputType: 'text',
+    supportsLiveTransform: false,
+    supportsFileUpload: false,
+    supportsHistory: true,
+    supportsShare: true,
+    implemented: true,
+  },
+  {
+    id: 'youtube-to-mp3',
+    title: 'YouTube to MP3',
+    category: 'media',
+    description: 'Convert YouTube video to downloadable MP3 link',
+    keywords: ['youtube', 'mp3', 'audio', 'download', 'convert'],
+    inputType: 'form',
+    outputType: 'text',
+    supportsLiveTransform: false,
     supportsFileUpload: false,
     supportsHistory: true,
     supportsShare: true,
