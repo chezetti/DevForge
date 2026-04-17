@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -19,6 +19,7 @@ import {
   Film,
   ChevronRight,
   Search,
+  Star,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -49,14 +50,28 @@ const categoryIcons: Record<ToolCategory, React.ReactNode> = {
 
 export function Sidebar() {
   const pathname = usePathname()
-  const { sidebarOpen } = useAppStore()
+  const { sidebarOpen, favorites } = useAppStore()
   const [expandedCategories, setExpandedCategories] = useState<Set<ToolCategory>>(
-    new Set(getCategories())
+    new Set<ToolCategory>()
   )
   const [searchQuery, setSearchQuery] = useState('')
 
+  const activeCategory = useMemo(() => {
+    const match = pathname.match(/^\/tools\/([^/]+)/)
+    return match ? (match[1] as ToolCategory) : null
+  }, [pathname])
+
+  const effectiveExpanded = useMemo(() => {
+    if (activeCategory && !expandedCategories.has(activeCategory)) {
+      const merged = new Set(expandedCategories)
+      merged.add(activeCategory)
+      return merged
+    }
+    return expandedCategories
+  }, [expandedCategories, activeCategory])
+
   const toggleCategory = (category: ToolCategory) => {
-    const newExpanded = new Set(expandedCategories)
+    const newExpanded = new Set(effectiveExpanded)
     if (newExpanded.has(category)) {
       newExpanded.delete(category)
     } else {
@@ -75,6 +90,11 @@ export function Sidebar() {
       )
     : tools
 
+  const favoriteTools = useMemo(
+    () => tools.filter((t) => favorites.includes(t.id)),
+    [favorites]
+  )
+
   const categories = getCategories()
 
   if (!sidebarOpen) return null
@@ -89,11 +109,12 @@ export function Sidebar() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-8 pl-8 text-sm bg-background border-border placeholder:text-muted-foreground"
+            aria-label="Search tools"
           />
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 pb-4">
+      <nav className="flex-1 overflow-y-auto px-2 pb-4" aria-label="Tool navigation">
         {searchQuery ? (
           <div className="space-y-0.5">
             {filteredTools.map((tool) => (
@@ -119,17 +140,52 @@ export function Sidebar() {
           </div>
         ) : (
           <div className="space-y-1">
+            {/* Favorites section */}
+            {favoriteTools.length > 0 && (
+              <div className="mb-2">
+                <div className="flex items-center gap-2 px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                  <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                  <span className="uppercase tracking-wide">Favorites</span>
+                  <span className="ml-auto text-[10px]">{favoriteTools.length}</span>
+                </div>
+                <div className="ml-5 space-y-0.5 mt-0.5">
+                  {favoriteTools.map((tool) => {
+                    const isActive = pathname === getToolUrl(tool.category, tool.id)
+                    return (
+                      <Link
+                        key={tool.id}
+                        href={getToolUrl(tool.category, tool.id)}
+                        className={cn(
+                          'flex items-center gap-2 px-2 py-1.5 text-sm rounded transition-colors duration-100 relative',
+                          isActive
+                            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-hover'
+                        )}
+                      >
+                        {isActive && (
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-foreground rounded-r" />
+                        )}
+                        <span className="truncate">{tool.title}</span>
+                      </Link>
+                    )
+                  })}
+                </div>
+                <div className="border-b border-sidebar-border my-2" />
+              </div>
+            )}
+
             {categories.map((category) => {
               const categoryTools = filteredTools.filter(
                 (t) => t.category === category
               )
-              const isExpanded = expandedCategories.has(category)
+              const isExpanded = effectiveExpanded.has(category)
 
               return (
                 <div key={category}>
                   <button
                     onClick={() => toggleCategory(category)}
                     className="flex items-center gap-2 w-full px-2 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-100"
+                    aria-expanded={isExpanded}
                   >
                     <ChevronRight
                       className={cn(
@@ -140,6 +196,9 @@ export function Sidebar() {
                     {categoryIcons[category]}
                     <span className="uppercase tracking-wide">
                       {categoryLabels[category]}
+                    </span>
+                    <span className="ml-auto text-[10px] tabular-nums">
+                      {categoryTools.length}
                     </span>
                   </button>
 

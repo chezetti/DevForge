@@ -79,6 +79,7 @@ export function ColorConverter() {
               value={colorValues ? formats[0]?.value : "#000000"}
               onChange={(e) => setInput(e.target.value)}
               className="w-12 h-10 rounded-md cursor-pointer"
+              aria-label="Pick a color"
             />
           </div>
         </div>
@@ -123,6 +124,7 @@ export function ColorConverter() {
                       variant="ghost"
                       size="icon"
                       onClick={() => copyToClipboard(format.value, index)}
+                      aria-label={`Copy ${format.name} value`}
                     >
                       {copiedIndex === index ? (
                         <Check className="h-4 w-4 text-green-500" />

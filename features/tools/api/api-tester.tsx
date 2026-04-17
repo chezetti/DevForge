@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { ToolShell } from "@/components/tools/tool-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,7 @@ export function ApiTester() {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<RequestHistory[]>([]);
   const [activeTab, setActiveTab] = useState("body");
+  const [responseLanguage, setResponseLanguage] = useState<string>("json");
 
   const addHeader = () => {
     setHeaders([...headers, { key: "", value: "", enabled: true }]);
@@ -92,15 +93,22 @@ export function ApiTester() {
       });
       setResponseHeaders(resHeaders.join("\n"));
 
-      // Get response body
       const contentType = res.headers.get("content-type") || "";
       let responseBody: string;
 
       if (contentType.includes("application/json")) {
         const json = await res.json();
         responseBody = JSON.stringify(json, null, 2);
+        setResponseLanguage("json");
+      } else if (contentType.includes("text/html")) {
+        responseBody = await res.text();
+        setResponseLanguage("html");
+      } else if (contentType.includes("text/xml") || contentType.includes("application/xml")) {
+        responseBody = await res.text();
+        setResponseLanguage("xml");
       } else {
         responseBody = await res.text();
+        setResponseLanguage("plaintext");
       }
 
       setResponse(responseBody);
@@ -125,10 +133,6 @@ export function ApiTester() {
     if (s >= 400) return "text-red-500";
     return "text-muted-foreground";
   };
-
-  useEffect(() => {
-    sendRequest();
-  }, [sendRequest]);
 
   return (
     <ToolShell toolId="api-tester">
@@ -189,6 +193,7 @@ export function ApiTester() {
                         checked={header.enabled}
                         onChange={(e) => updateHeader(index, "enabled", e.target.checked)}
                         className="h-4 w-4"
+                        aria-label={`Enable header ${header.key || `#${index + 1}`}`}
                       />
                       <Input
                         value={header.key}
@@ -202,7 +207,7 @@ export function ApiTester() {
                         placeholder="Value"
                         className="flex-1 font-mono text-sm"
                       />
-                      <Button variant="ghost" size="icon" onClick={() => removeHeader(index)}>
+                      <Button variant="ghost" size="icon" onClick={() => removeHeader(index)} aria-label={`Remove header ${header.key || `#${index + 1}`}`}>
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -275,7 +280,7 @@ export function ApiTester() {
                 <TabsTrigger value="res-headers">Headers</TabsTrigger>
               </TabsList>
               <TabsContent value="response" className="flex-1 m-0 overflow-hidden">
-                <OutputPanel value={response} language="json" />
+                <OutputPanel value={response} language={responseLanguage} />
               </TabsContent>
               <TabsContent value="res-headers" className="flex-1 m-0 overflow-hidden">
                 <OutputPanel value={responseHeaders} language="text" />

@@ -154,6 +154,7 @@ export function GradientGenerator() {
                   background: `linear-gradient(90deg, ${preset.colors.join(", ")})`,
                 }}
                 title={preset.name}
+                aria-label={`Apply preset: ${preset.name}`}
               />
             ))}
           </div>
@@ -170,6 +171,7 @@ export function GradientGenerator() {
                   value={stop.color}
                   onChange={(e) => updateStop(index, "color", e.target.value)}
                   className="w-10 h-10 rounded cursor-pointer"
+                  aria-label={`Color for stop ${index + 1}`}
                 />
                 <Input
                   value={stop.color}
@@ -192,6 +194,7 @@ export function GradientGenerator() {
                   size="icon"
                   onClick={() => removeStop(index)}
                   disabled={stops.length <= 2}
+                  aria-label={`Remove color stop ${index + 1}`}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -206,7 +209,7 @@ export function GradientGenerator() {
               <code className="flex-1 p-3 rounded-md bg-muted/50 font-mono text-sm break-all">
                 background: {gradientCSS()};
               </code>
-              <Button variant="outline" size="icon" onClick={copyToClipboard}>
+              <Button variant="outline" size="icon" onClick={copyToClipboard} aria-label="Copy CSS">
                 {copied ? (
                   <Check className="h-4 w-4 text-green-500" />
                 ) : (

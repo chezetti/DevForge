@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useCallback, useEffect, useMemo } from 'react'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Copy, Check } from 'lucide-react'
+import { toast } from 'sonner'
 import { ToolShell } from '@/components/tools/tool-shell'
 import { EditorPanel } from '@/components/tools/editor-panel'
+import { Button } from '@/components/ui/button'
 import { getToolById } from '@/config/tool-registry'
 import { useAppStore } from '@/store/app-store'
 import { decodeJwt } from '@/utils/security'
@@ -60,6 +62,14 @@ export function JwtDecoder() {
     ? (decoded.payload.exp as number) * 1000 < Date.now()
     : false
 
+  const [copiedSection, setCopiedSection] = useState<string | null>(null)
+  const copySection = useCallback(async (section: string, data: unknown) => {
+    await navigator.clipboard.writeText(JSON.stringify(data, null, 2))
+    setCopiedSection(section)
+    toast.success(`${section} copied to clipboard`)
+    setTimeout(() => setCopiedSection(null), 1500)
+  }, [])
+
   return (
     <ToolShell tool={tool} onHistorySelect={handleHistorySelect}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -74,7 +84,7 @@ export function JwtDecoder() {
 
         <div className="space-y-4">
           {error ? (
-            <div className="p-4 border border-destructive/20 bg-destructive/5 rounded">
+            <div className="p-4 border border-destructive/20 bg-destructive/5 rounded" role="alert">
               <p className="text-sm text-destructive-foreground">{error}</p>
             </div>
           ) : decoded ? (
@@ -84,9 +94,20 @@ export function JwtDecoder() {
                   <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Header
                   </span>
-                  <span className="text-xs text-muted-foreground font-mono">
-                    {decoded.header.alg as string}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {decoded.header.alg as string}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => copySection('Header', decoded.header)}
+                      aria-label="Copy header"
+                    >
+                      {copiedSection === 'Header' ? <Check className="h-3 w-3 text-success-foreground" /> : <Copy className="h-3 w-3" />}
+                    </Button>
+                  </div>
                 </div>
                 <pre className="text-xs font-mono text-foreground overflow-auto max-h-32">
                   {JSON.stringify(decoded.header, null, 2)}
@@ -95,9 +116,20 @@ export function JwtDecoder() {
 
               <div className="p-3 border border-border rounded bg-background-secondary">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Payload
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Payload
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => copySection('Payload', decoded.payload)}
+                      aria-label="Copy payload"
+                    >
+                      {copiedSection === 'Payload' ? <Check className="h-3 w-3 text-success-foreground" /> : <Copy className="h-3 w-3" />}
+                    </Button>
+                  </div>
                   {isExpired && (
                     <span className="flex items-center gap-1 text-xs text-destructive-foreground">
                       <AlertTriangle className="h-3 w-3" />

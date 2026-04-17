@@ -4,8 +4,10 @@ import { useMemo, useState } from 'react'
 import { ToolShell } from '@/components/tools/tool-shell'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { OutputPanel } from '@/components/tools/output-panel'
+import { Sun, Moon } from 'lucide-react'
 
 export function FlexboxGenerator() {
   const [direction, setDirection] = useState('row')
@@ -13,6 +15,7 @@ export function FlexboxGenerator() {
   const [align, setAlign] = useState('center')
   const [wrap, setWrap] = useState('nowrap')
   const [gap, setGap] = useState(16)
+  const [previewDark, setPreviewDark] = useState(true)
 
   const css = useMemo(
     () =>
@@ -75,20 +78,33 @@ export function FlexboxGenerator() {
               <Input type="number" className="no-spin" min={0} max={40} value={gap} onChange={(e) => setGap(Math.max(0, Math.min(40, Number(e.target.value) || 0)))} />
             </div>
           </div>
-          <div className="h-44 rounded border border-border bg-zinc-900 p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Preview</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs gap-1.5"
+              onClick={() => setPreviewDark(!previewDark)}
+              aria-label={`Switch to ${previewDark ? 'light' : 'dark'} preview`}
+            >
+              {previewDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              {previewDark ? 'Light' : 'Dark'}
+            </Button>
+          </div>
+          <div className={`h-44 rounded border border-border p-3 ${previewDark ? 'bg-zinc-900' : 'bg-white'}`}>
             <div
               className="w-full h-full"
               style={{
                 display: 'flex',
                 flexDirection: direction as 'row' | 'column',
-                justifyContent: justify as any,
-                alignItems: align as any,
-                flexWrap: wrap as any,
+                justifyContent: justify,
+                alignItems: align,
+                flexWrap: wrap as 'nowrap' | 'wrap',
                 gap: `${gap}px`,
               }}
             >
               {[1, 2, 3, 4].map((item) => (
-                <div key={item} className="w-10 h-10 rounded bg-zinc-200/90 text-zinc-900 text-xs flex items-center justify-center font-medium shrink-0">
+                <div key={item} className={`w-10 h-10 rounded text-xs flex items-center justify-center font-medium shrink-0 ${previewDark ? 'bg-zinc-200/90 text-zinc-900' : 'bg-zinc-800 text-zinc-100'}`}>
                   {item}
                 </div>
               ))}

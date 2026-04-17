@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AppShell } from "@/components/layout/app-shell";
@@ -109,6 +109,21 @@ export default function HomePage() {
     [addRecentTool, router]
   );
 
+  const searchRef = useRef<HTMLDivElement>(null);
+  const [searchFocused, setSearchFocused] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const showSearchDropdown = searchFocused && searchQuery.trim().length > 0;
+
   return (
     <AppShell>
       <div className="flex-1 overflow-auto">
@@ -124,30 +139,40 @@ export default function HomePage() {
             </p>
 
             {/* Search */}
-            <div className="relative max-w-xl mx-auto mt-6 sm:mt-8">
+            <div className="relative max-w-xl mx-auto mt-6 sm:mt-8" ref={searchRef}>
               <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-muted-foreground" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
                 placeholder="Search tools... (Ctrl+K)"
                 className="pl-10 sm:pl-12 h-10 sm:h-12 text-sm sm:text-base"
               />
 
               {/* Search Results Dropdown */}
-              {filteredTools.length > 0 && (
+              {showSearchDropdown && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg z-50 max-h-80 overflow-auto">
-                  {filteredTools.map((tool) => (
-                    <button
-                      key={tool.id}
-                      onClick={() => handleToolClick(tool)}
-                      className="w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors flex items-center gap-3"
-                    >
-                      <span className="font-medium">{tool.title}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {tool.categoryName}
-                      </span>
-                    </button>
-                  ))}
+                  {filteredTools.length > 0 ? (
+                    filteredTools.map((tool) => (
+                      <button
+                        key={tool.id}
+                        onClick={() => {
+                          handleToolClick(tool);
+                          setSearchFocused(false);
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors flex items-center gap-3"
+                      >
+                        <span className="font-medium">{tool.title}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {tool.categoryName}
+                        </span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-6 text-center text-muted-foreground text-sm">
+                      No tools found for &ldquo;{searchQuery}&rdquo;
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -242,9 +267,9 @@ export default function HomePage() {
                     key={category.slug}
                     className="block p-4 sm:p-6 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
                   >
-                    <button
-                      onClick={() => router.push(`/tools#${category.slug}`)}
-                      className="w-full text-left"
+                    <Link
+                      href={`/tools#${category.slug}`}
+                      className="block"
                     >
                       <div className="flex items-center gap-3 mb-3 sm:mb-4">
                         <div className="p-2 rounded-md bg-muted">
@@ -257,7 +282,7 @@ export default function HomePage() {
                           </p>
                         </div>
                       </div>
-                    </button>
+                    </Link>
                     <div className="flex flex-wrap gap-2">
                       {category.tools.slice(0, 4).map((tool) => (
                         <Link

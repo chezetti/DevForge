@@ -1,6 +1,7 @@
 'use client'
 
 import { ReactNode } from 'react'
+import { toast } from 'sonner'
 import { History, Share2, Settings2, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -73,9 +74,9 @@ export function ToolShell({
         return
       }
       await navigator.clipboard.writeText(url)
-      window.alert('Tool link copied to clipboard.')
+      toast.success('Tool link copied to clipboard')
     } catch {
-      window.alert('Unable to share this tool right now.')
+      toast.error('Unable to share this tool right now')
     }
   }
 
@@ -93,6 +94,7 @@ export function ToolShell({
             size="icon"
             className="h-8 w-8 text-muted-foreground hover:text-foreground"
             title={favorite ? 'Remove from favorites' : 'Add to favorites'}
+            aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
             onClick={() => toggleFavorite(safeTool.id)}
           >
             <Star className={`h-4 w-4 ${favorite ? 'fill-yellow-500 text-yellow-500' : ''}`} />
@@ -104,6 +106,7 @@ export function ToolShell({
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  aria-label="View history"
                 >
                   <History className="h-4 w-4" />
                 </Button>
@@ -133,6 +136,7 @@ export function ToolShell({
               size="icon"
               className="h-8 w-8 text-muted-foreground hover:text-foreground"
               title="Share"
+              aria-label="Share tool"
               onClick={handleShare}
             >
               <Share2 className="h-4 w-4" />
@@ -145,6 +149,7 @@ export function ToolShell({
                 size="icon"
                 className="h-8 w-8 text-muted-foreground hover:text-foreground"
                 title="Settings"
+                aria-label="Tool settings"
               >
                 <Settings2 className="h-4 w-4" />
               </Button>

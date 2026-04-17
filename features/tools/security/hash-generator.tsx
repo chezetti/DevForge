@@ -23,6 +23,7 @@ export function HashGenerator() {
     'SHA-512': '',
   })
   const [copiedAlgo, setCopiedAlgo] = useState<Algorithm | null>(null)
+  const [computing, setComputing] = useState(false)
 
   const computeHashes = useCallback(async (value: string) => {
     if (!value) {
@@ -34,15 +35,19 @@ export function HashGenerator() {
       return
     }
 
-    const algorithms: Algorithm[] = ['SHA-256', 'SHA-384', 'SHA-512']
-    const results = await Promise.all(
-      algorithms.map(async (algo) => {
-        const hash = await generateHash(value, algo)
-        return [algo, hash] as [Algorithm, string]
-      })
-    )
-
-    setHashes(Object.fromEntries(results) as Record<Algorithm, string>)
+    setComputing(true)
+    try {
+      const algorithms: Algorithm[] = ['SHA-256', 'SHA-384', 'SHA-512']
+      const results = await Promise.all(
+        algorithms.map(async (algo) => {
+          const hash = await generateHash(value, algo)
+          return [algo, hash] as [Algorithm, string]
+        })
+      )
+      setHashes(Object.fromEntries(results) as Record<Algorithm, string>)
+    } finally {
+      setComputing(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -93,10 +98,13 @@ export function HashGenerator() {
         />
 
         <div className="space-y-3">
-          <div className="px-3 py-2 border-b border-border">
+          <div className="px-3 py-2 border-b border-border flex items-center gap-2">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Hash Output
             </span>
+            {computing && (
+              <span className="text-xs text-muted-foreground animate-pulse">Computing...</span>
+            )}
           </div>
 
           {(['SHA-256', 'SHA-384', 'SHA-512'] as Algorithm[]).map((algo) => (
@@ -114,6 +122,8 @@ export function HashGenerator() {
                   onClick={() => handleCopy(algo)}
                   disabled={!hashes[algo]}
                   className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                  title={`Copy ${algo} hash`}
+                  aria-label={`Copy ${algo} hash`}
                 >
                   {copiedAlgo === algo ? (
                     <Check className="h-3 w-3 text-success-foreground" />

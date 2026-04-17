@@ -108,7 +108,7 @@ export function JsonBeautifier() {
       onHistorySelect={handleHistorySelect}
       actions={
         <Select value={indent} onValueChange={setIndent}>
-          <SelectTrigger className="w-24 h-8 text-xs bg-background border-border">
+          <SelectTrigger className="w-24 h-8 text-xs bg-background border-border" aria-label="Indent size">
             <SelectValue placeholder="Indent" />
           </SelectTrigger>
           <SelectContent>

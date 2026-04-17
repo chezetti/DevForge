@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Copy, Download, Check, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { Copy, Download, Check, AlertCircle, CheckCircle2, FileOutput } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Editor from '@monaco-editor/react'
 import type { Monaco } from '@monaco-editor/react'
@@ -14,6 +15,8 @@ interface OutputPanelProps {
   errorMessage?: string
   className?: string
   minHeight?: string
+  emptyHint?: string
+  onClear?: () => void
 }
 
 export function OutputPanel({
@@ -24,12 +27,15 @@ export function OutputPanel({
   errorMessage,
   className = '',
   minHeight = '300px',
+  emptyHint = 'Paste input on the left to see results',
+  onClear,
 }: OutputPanelProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(value)
     setCopied(true)
+    toast.success('Copied to clipboard')
     setTimeout(() => setCopied(false), 1500)
   }, [value])
 
@@ -44,26 +50,8 @@ export function OutputPanel({
   }, [value, language])
 
   const beforeMount = useCallback((monaco: Monaco) => {
-    monaco.editor.defineTheme('devforge-dark', {
-      base: 'vs-dark',
-      inherit: true,
-      rules: [
-        { token: 'comment', foreground: '6B7280' },
-        { token: 'keyword', foreground: 'FFFFFF' },
-        { token: 'string', foreground: 'A1A1AA' },
-        { token: 'number', foreground: 'FFFFFF' },
-      ],
-      colors: {
-        'editor.background': '#0D0D0D',
-        'editor.foreground': '#FFFFFF',
-        'editor.lineHighlightBackground': '#1A1A1A',
-        'editor.selectionBackground': '#2A2A2A',
-        'editorLineNumber.foreground': '#3F3F46',
-        'editorLineNumber.activeForeground': '#A1A1AA',
-        'editorCursor.foreground': '#FFFFFF',
-        'editor.inactiveSelectionBackground': '#1F1F1F',
-      },
-    })
+    const { registerDevforgeTheme } = require('@/lib/monaco-theme')
+    registerDevforgeTheme(monaco)
   }, [])
 
   return (
@@ -87,6 +75,7 @@ export function OutputPanel({
             onClick={handleCopy}
             className="h-7 w-7 text-muted-foreground hover:text-foreground"
             title="Copy"
+            aria-label="Copy output"
             disabled={!value}
           >
             {copied ? (
@@ -101,16 +90,37 @@ export function OutputPanel({
             onClick={handleDownload}
             className="h-7 w-7 text-muted-foreground hover:text-foreground"
             title="Download"
+            aria-label="Download output"
             disabled={!value}
           >
             <Download className="h-3.5 w-3.5" />
           </Button>
+          {onClear && value && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClear}
+              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+              title="Clear output"
+              aria-label="Clear output"
+            >
+              <span className="text-xs">✕</span>
+            </Button>
+          )}
         </div>
       </div>
       <div style={{ minHeight }} className="relative flex-1 min-h-[220px]">
         {status === 'error' && errorMessage ? (
-          <div className="p-4 text-sm text-destructive-foreground font-mono">
-            {errorMessage}
+          <div className="flex flex-col gap-3 p-4" role="alert">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-destructive-foreground shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-destructive-foreground">Error</p>
+                <p className="text-sm text-destructive-foreground/80 font-mono whitespace-pre-wrap">
+                  {errorMessage}
+                </p>
+              </div>
+            </div>
           </div>
         ) : value ? (
           <Editor
@@ -145,8 +155,12 @@ export function OutputPanel({
             }}
           />
         ) : (
-          <div className="flex items-center justify-center h-full min-h-[200px]">
-            <span className="text-sm text-muted-foreground">No output yet</span>
+          <div className="flex flex-col items-center justify-center h-full min-h-[200px] gap-3">
+            <FileOutput className="h-8 w-8 text-muted-foreground/40" />
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">No output yet</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">{emptyHint}</p>
+            </div>
           </div>
         )}
       </div>

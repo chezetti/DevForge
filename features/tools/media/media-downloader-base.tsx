@@ -15,6 +15,7 @@ interface MediaDownloaderBaseProps {
   mediaType: MediaType
   placeholder: string
   helperText: string
+  urlLabel?: string
 }
 
 export function MediaDownloaderBase({
@@ -22,6 +23,7 @@ export function MediaDownloaderBase({
   mediaType,
   placeholder,
   helperText,
+  urlLabel,
 }: MediaDownloaderBaseProps) {
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
@@ -122,7 +124,7 @@ export function MediaDownloaderBase({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
         <div className="border border-border rounded bg-background-secondary p-4 space-y-4 min-h-[360px]">
           <div className="space-y-2">
-            <Label htmlFor={`${toolId}-url`}>Video URL</Label>
+            <Label htmlFor={`${toolId}-url`}>{urlLabel || (mediaType === 'youtube-mp3' ? 'Audio URL' : 'Video URL')}</Label>
             <Input
               id={`${toolId}-url`}
               value={url}

@@ -1,9 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { Sun, Moon } from 'lucide-react'
 import { ToolShell } from '@/components/tools/tool-shell'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { OutputPanel } from '@/components/tools/output-panel'
 
 export function BoxShadowGenerator() {
@@ -13,6 +15,7 @@ export function BoxShadowGenerator() {
   const [spread, setSpread] = useState(0)
   const [opacity, setOpacity] = useState(25)
   const [color, setColor] = useState('#000000')
+  const [previewDark, setPreviewDark] = useState(true)
 
   const css = useMemo(() => {
     const alpha = Math.min(100, Math.max(0, opacity)) / 100
@@ -53,8 +56,21 @@ export function BoxShadowGenerator() {
               <Input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-10 p-1" />
             </div>
           </div>
-          <div className="h-44 rounded border border-border bg-gradient-to-br from-zinc-900 to-zinc-700 flex items-center justify-center">
-            <div className="w-32 h-32 bg-white rounded transition-all" style={{ boxShadow: css.replace('box-shadow: ', '').replace(';', '') }} />
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Preview</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs gap-1.5"
+              onClick={() => setPreviewDark(!previewDark)}
+              aria-label={`Switch to ${previewDark ? 'light' : 'dark'} preview`}
+            >
+              {previewDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              {previewDark ? 'Light' : 'Dark'}
+            </Button>
+          </div>
+          <div className={`h-44 rounded border border-border flex items-center justify-center ${previewDark ? 'bg-linear-to-br from-zinc-900 to-zinc-700' : 'bg-linear-to-br from-zinc-100 to-zinc-300'}`}>
+            <div className={`w-32 h-32 rounded transition-all ${previewDark ? 'bg-white' : 'bg-zinc-800'}`} style={{ boxShadow: css.replace('box-shadow: ', '').replace(';', '') }} />
           </div>
         </div>
         <OutputPanel value={css} language="css" title="CSS Output" status="success" minHeight="360px" />

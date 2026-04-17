@@ -70,28 +70,33 @@ export function ZodToTs() {
     return zodToInterface(input, interfaceName || 'User')
   }, [input, interfaceName])
 
+  const isError = output.startsWith('// Could not find')
+  const outputStatus = !output ? 'idle' : isError ? 'error' : 'success'
+
   return (
     <ToolShell toolId="zod-to-ts" showHistory={false}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
         <EditorPanel
           value={input}
           onChange={setInput}
-          language="plaintext"
+          language="typescript"
           title="Input (Zod Schema)"
           minHeight="360px"
         />
         <div className="flex flex-col gap-3">
-          <label className="text-xs text-muted-foreground">Interface name</label>
+          <label htmlFor="interface-name" className="text-xs text-muted-foreground">Interface name</label>
           <input
+            id="interface-name"
             value={interfaceName}
             onChange={(e) => setInterfaceName(e.target.value)}
             className="h-9 rounded border border-border bg-background px-3 text-sm"
           />
           <OutputPanel
-            value={output}
-            language="plaintext"
+            value={isError ? '' : output}
+            language="typescript"
             title="Output (TypeScript)"
-            status={output ? 'success' : 'idle'}
+            status={outputStatus}
+            errorMessage={isError ? 'Could not find z.object({ ... }) in the input. Make sure your Zod schema uses z.object().' : undefined}
             minHeight="312px"
           />
         </div>

@@ -551,21 +551,27 @@ export function getToolComponent(toolId: string): ComponentType | null {
       const output = useMemo(() => buildFallbackOutput(tool.id, input), [tool.id, input])
       return (
         <ToolShell tool={tool} showHistory={false}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
-            <EditorPanel
-              value={input}
-              onChange={setInput}
-              language="text"
-              title="Input"
-              placeholder="Paste your data here..."
-            />
-            <OutputPanel
-              value={output}
-              language="text"
-              title="Output"
-              status={output ? "success" : "idle"}
-              errorMessage=""
-            />
+          <div className="flex flex-col h-full gap-4">
+            <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground bg-muted/30 border border-border rounded">
+              <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-medium uppercase tracking-wide">Basic</span>
+              <span>This tool provides basic functionality. A full-featured version is coming soon.</span>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+              <EditorPanel
+                value={input}
+                onChange={setInput}
+                language="text"
+                title="Input"
+                placeholder="Paste your data here..."
+              />
+              <OutputPanel
+                value={output}
+                language="text"
+                title="Output"
+                status={output ? "success" : "idle"}
+                errorMessage=""
+              />
+            </div>
           </div>
         </ToolShell>
       );

@@ -38,6 +38,7 @@ export function MobileNav() {
               variant="ghost"
               size="icon"
               className="h-8 w-8 text-muted-foreground"
+              aria-label="Open navigation menu"
             >
               <Menu className="h-4 w-4" />
             </Button>
@@ -122,6 +123,7 @@ export function MobileNav() {
         size="icon"
         onClick={() => setCommandPaletteOpen(true)}
         className="h-8 w-8 text-muted-foreground"
+        aria-label="Search tools (Ctrl+K)"
       >
         <Command className="h-4 w-4" />
       </Button>

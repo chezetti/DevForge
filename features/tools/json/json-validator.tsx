@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { CheckCircle2, XCircle } from 'lucide-react'
+import { CheckCircle2, XCircle, Play } from 'lucide-react'
 import { ToolShell } from '@/components/tools/tool-shell'
 import { EditorPanel } from '@/components/tools/editor-panel'
+import { Button } from '@/components/ui/button'
 import { getToolById } from '@/config/tool-registry'
 import { useAppStore } from '@/store/app-store'
 import { validateJson } from '@/utils/parsers/json'
@@ -37,10 +38,8 @@ export function JsonValidator() {
     const draft = getToolDraft(tool.id)
     const initial = draft || EXAMPLE
     setInput(initial)
-    if (autoRun) {
-      validate(initial)
-    }
-  }, [getToolDraft, tool.id, autoRun, validate])
+    validate(initial)
+  }, [getToolDraft, tool.id, validate])
 
   const handleInputChange = useCallback(
     (value: string) => {
@@ -63,7 +62,18 @@ export function JsonValidator() {
   )
 
   return (
-    <ToolShell tool={tool} onHistorySelect={handleHistorySelect}>
+    <ToolShell
+      tool={tool}
+      onHistorySelect={handleHistorySelect}
+      actions={
+        !autoRun ? (
+          <Button size="sm" onClick={() => validate(input)} className="h-8 px-3 text-xs gap-1.5">
+            <Play className="h-3.5 w-3.5" />
+            Validate
+          </Button>
+        ) : undefined
+      }
+    >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
         <EditorPanel
           value={input}
@@ -79,7 +89,7 @@ export function JsonValidator() {
               Result
             </span>
           </div>
-          <div className="flex-1 flex items-center justify-center p-8">
+          <div className="flex-1 flex items-center justify-center p-8" role="status" aria-live="polite">
             {validation === null ? (
               <p className="text-muted-foreground text-sm">
                 Enter JSON to validate
@@ -95,7 +105,7 @@ export function JsonValidator() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-3 text-center max-w-md">
+              <div className="flex flex-col items-center gap-3 text-center max-w-md" role="alert">
                 <XCircle className="h-12 w-12 text-destructive-foreground" />
                 <div>
                   <p className="text-lg font-medium text-foreground">Invalid JSON</p>

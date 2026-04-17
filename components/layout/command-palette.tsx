@@ -114,8 +114,11 @@ export function CommandPalette() {
                 className="cursor-pointer"
               >
                 {categoryIcons[tool!.category]}
-                <span className="ml-2">{tool!.title}</span>
-                <span className="ml-auto text-xs text-muted-foreground">
+                <div className="ml-2 flex-1 min-w-0">
+                  <span>{tool!.title}</span>
+                  <p className="text-xs text-muted-foreground/60 truncate">{tool!.description}</p>
+                </div>
+                <span className="ml-auto text-xs text-muted-foreground shrink-0">
                   {categoryLabels[tool!.category]}
                 </span>
               </CommandItem>
@@ -137,9 +140,12 @@ export function CommandPalette() {
                   className="cursor-pointer"
                 >
                   {categoryIcons[tool.category]}
-                  <span className="ml-2">{tool.title}</span>
+                  <div className="ml-2 flex-1 min-w-0">
+                    <span>{tool.title}</span>
+                    <p className="text-xs text-muted-foreground/60 truncate">{tool.description}</p>
+                  </div>
                   {!tool.implemented && (
-                    <span className="ml-auto text-[10px] text-muted-foreground">
+                    <span className="ml-auto text-[10px] text-muted-foreground shrink-0">
                       Coming soon
                     </span>
                   )}
@@ -149,6 +155,12 @@ export function CommandPalette() {
           )
         })}
       </CommandList>
+      <div className="flex items-center justify-between px-3 py-2 border-t border-border text-[10px] text-muted-foreground/50">
+        <span>Navigate with arrow keys</span>
+        <span>
+          <kbd className="px-1 py-0.5 rounded bg-muted font-mono">Esc</kbd> to close
+        </span>
+      </div>
     </CommandDialog>
   )
 }

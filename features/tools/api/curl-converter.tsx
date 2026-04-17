@@ -81,16 +81,15 @@ export function CurlConverter() {
               onChange={handleInputChange}
               language="bash"
               placeholder="Paste your cURL command here..."
-              onAction={convert}
-              actionLabel="Convert"
             />
           </div>
           <div className="flex-1 overflow-hidden">
-            {error ? (
-              <div className="p-4 text-destructive text-sm">{error}</div>
-            ) : (
-              <OutputPanel value={output} language={language === "go" ? "go" : language} />
-            )}
+            <OutputPanel
+              value={error ? "" : output}
+              language={language === "go" ? "go" : language}
+              status={error ? "error" : output ? "success" : "idle"}
+              errorMessage={error || undefined}
+            />
           </div>
         </div>
       </div>

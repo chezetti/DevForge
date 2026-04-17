@@ -27,21 +27,34 @@ function convertTemperature(value: number, from: string, to: string): number {
 
 export function UnitConverter() {
   const [category, setCategory] = useState<keyof typeof UNIT_OPTIONS>('length')
-  const [inputValue, setInputValue] = useState(100)
+  const [inputValue, setInputValue] = useState<string>('100')
   const [fromUnit, setFromUnit] = useState('m')
   const [toUnit, setToUnit] = useState('ft')
 
-  const output = useMemo(() => {
+  const { output, outputStatus, hint } = useMemo(() => {
+    const numValue = parseFloat(inputValue)
+    if (inputValue === '' || isNaN(numValue)) {
+      return { output: '', outputStatus: 'idle' as const, hint: null }
+    }
+
+    if (fromUnit === toUnit) {
+      return {
+        output: `${numValue} ${fromUnit} = ${numValue} ${toUnit}`,
+        outputStatus: 'success' as const,
+        hint: 'Same unit selected for both From and To',
+      }
+    }
+
     if (category === 'temperature') {
-      const result = convertTemperature(inputValue, fromUnit, toUnit)
-      return `${inputValue} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`
+      const result = convertTemperature(numValue, fromUnit, toUnit)
+      return { output: `${numValue} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`, outputStatus: 'success' as const, hint: null }
     }
 
     const from = FACTORS[fromUnit]
     const to = FACTORS[toUnit]
-    if (!from || !to) return 'Please select valid units'
-    const result = (inputValue * from) / to
-    return `${inputValue} ${fromUnit} = ${result.toFixed(6)} ${toUnit}`
+    if (!from || !to) return { output: '', outputStatus: 'error' as const, hint: null }
+    const result = (numValue * from) / to
+    return { output: `${numValue} ${fromUnit} = ${result.toFixed(6)} ${toUnit}`, outputStatus: 'success' as const, hint: null }
   }, [inputValue, category, fromUnit, toUnit])
 
   const units = UNIT_OPTIONS[category]
@@ -72,7 +85,7 @@ export function UnitConverter() {
 
           <div className="space-y-2">
             <Label>Value</Label>
-            <Input type="number" className="no-spin" value={inputValue} onChange={(e) => setInputValue(Number(e.target.value) || 0)} />
+            <Input type="number" className="no-spin" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Enter a value" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -96,7 +109,7 @@ export function UnitConverter() {
             </div>
           </div>
         </div>
-        <OutputPanel value={output} language="text" title="Converted Result" status="success" minHeight="360px" />
+        <OutputPanel value={hint ? `${output}\n\n⚠ ${hint}` : output} language="text" title="Converted Result" status={outputStatus} minHeight="360px" />
       </div>
     </ToolShell>
   )

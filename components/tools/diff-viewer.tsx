@@ -47,9 +47,14 @@ export function DiffViewer({
   return (
     <div className={`border border-border rounded bg-background-secondary ${className}`}>
       <div className="flex items-center justify-between px-3 py-2 border-b border-border">
-        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          Diff
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Diff
+          </span>
+          <span className="text-xs text-muted-foreground/60">
+            {leftTitle} → {rightTitle}
+          </span>
+        </div>
         <div className="flex items-center gap-3 text-xs">
           <span className="text-success-foreground">+{stats.added} added</span>
           <span className="text-destructive-foreground">-{stats.removed} removed</span>
