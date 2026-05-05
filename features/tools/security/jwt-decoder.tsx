@@ -141,24 +141,24 @@ export function JwtDecoder() {
                   {JSON.stringify(decoded.payload, null, 2)}
                 </pre>
 
-                {(decoded.payload.iat || decoded.payload.exp || decoded.payload.nbf) && (
+                {(typeof decoded.payload.iat === 'number' || typeof decoded.payload.exp === 'number' || typeof decoded.payload.nbf === 'number') && (
                   <div className="mt-3 pt-3 border-t border-border space-y-1">
-                    {decoded.payload.iat && (
+                    {typeof decoded.payload.iat === 'number' && (
                       <p className="text-xs text-muted-foreground">
                         <span className="font-medium">Issued:</span>{' '}
-                        {formatTimestamp(decoded.payload.iat as number)}
+                        {formatTimestamp(decoded.payload.iat)}
                       </p>
                     )}
-                    {decoded.payload.exp && (
+                    {typeof decoded.payload.exp === 'number' && (
                       <p className={`text-xs ${isExpired ? 'text-destructive-foreground' : 'text-muted-foreground'}`}>
                         <span className="font-medium">Expires:</span>{' '}
-                        {formatTimestamp(decoded.payload.exp as number)}
+                        {formatTimestamp(decoded.payload.exp)}
                       </p>
                     )}
-                    {decoded.payload.nbf && (
+                    {typeof decoded.payload.nbf === 'number' && (
                       <p className="text-xs text-muted-foreground">
                         <span className="font-medium">Not Before:</span>{' '}
-                        {formatTimestamp(decoded.payload.nbf as number)}
+                        {formatTimestamp(decoded.payload.nbf)}
                       </p>
                     )}
                   </div>

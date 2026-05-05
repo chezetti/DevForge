@@ -1,7 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server'
 import ytdl from '@distube/ytdl-core'
+import { z } from 'zod'
+
+const ResolveRequestSchema = z.object({
+  url: z.string().min(1, 'URL is required').url('Invalid URL format'),
+  type: z.enum(['youtube-video', 'instagram-video', 'youtube-mp3']),
+})
 
 type MediaType = 'youtube-video' | 'instagram-video' | 'youtube-mp3'
+
+interface CacheEntry {
+  data: Record<string, unknown>
+  expiresAt: number
+}
+
+const CACHE_TTL = 5 * 60 * 1000
+const CACHE_MAX_SIZE = 50
+const resolveCache = new Map<string, CacheEntry>()
+
+function getCached(key: string): Record<string, unknown> | null {
+  const entry = resolveCache.get(key)
+  if (!entry) return null
+  if (Date.now() > entry.expiresAt) {
+    resolveCache.delete(key)
+    return null
+  }
+  return entry.data
+}
+
+function setCache(key: string, data: Record<string, unknown>) {
+  if (resolveCache.size >= CACHE_MAX_SIZE) {
+    const oldest = resolveCache.keys().next().value
+    if (oldest) resolveCache.delete(oldest)
+  }
+  resolveCache.set(key, { data, expiresAt: Date.now() + CACHE_TTL })
+}
 
 function normalizeUrl(value: string): string {
   return value.trim()
@@ -31,6 +64,16 @@ function extractField(html: string, field: string): string | null {
 
 function isYoutubeUrl(url: string): boolean {
   return /(youtube\.com|youtu\.be)/i.test(url)
+}
+
+async function fetchYoutubeTitle(url: string): Promise<string> {
+  try {
+    if (!ytdl.validateURL(url)) return ''
+    const info = await ytdl.getInfo(url)
+    return info.videoDetails?.title || ''
+  } catch {
+    return ''
+  }
 }
 
 function sleep(ms: number) {
@@ -76,6 +119,11 @@ async function trySaveNowYoutube(url: string, type: MediaType) {
       }
     }
 
+    const providerTitle =
+      (typeof initData?.title === 'string' && initData.title) ||
+      (typeof initData?.filename === 'string' && initData.filename) ||
+      ''
+
     for (let i = 0; i < 45; i++) {
       await sleep(1000)
       const progressRes = await fetch(`https://p.savenow.to/api/progress?id=${encodeURIComponent(id)}`, {
@@ -90,10 +138,14 @@ async function trySaveNowYoutube(url: string, type: MediaType) {
       if (!progressRes.ok) continue
       const progressData = await progressRes.json()
       if (typeof progressData?.download_url === 'string' && progressData.download_url) {
+        const resolvedTitle =
+          (typeof progressData?.title === 'string' && progressData.title) ||
+          (typeof progressData?.filename === 'string' && progressData.filename) ||
+          providerTitle
         return {
           ok: true as const,
           downloadUrl: progressData.download_url,
-          title: type === 'youtube-mp3' ? 'youtube-audio' : 'youtube-video',
+          title: resolvedTitle || '',
           source: 'savenow-direct',
         }
       }
@@ -339,62 +391,83 @@ async function tryInstagramEmbed(url: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const url = normalizeUrl(String(body?.url || ''))
-    const type = body?.type as MediaType
+    const parsed = ResolveRequestSchema.safeParse(body)
 
-    if (!url) {
-      return NextResponse.json({ error: 'URL is required' }, { status: 400 })
+    if (!parsed.success) {
+      const message = parsed.error.issues.map((i) => i.message).join('; ')
+      return NextResponse.json({ error: message }, { status: 400 })
     }
 
-    if (!['youtube-video', 'instagram-video', 'youtube-mp3'].includes(type)) {
-      return NextResponse.json({ error: 'Unsupported media type' }, { status: 400 })
+    const url = normalizeUrl(parsed.data.url)
+    const type = parsed.data.type
+    const cacheKey = `${type}:${url}`
+
+    const cached = getCached(cacheKey)
+    if (cached) {
+      return NextResponse.json(cached)
     }
 
     if (type === 'youtube-video' || type === 'youtube-mp3') {
       const youtubeFromProvider = await trySaveNowYoutube(url, type)
       if (youtubeFromProvider.ok) {
-        return NextResponse.json({
+        let resolvedTitle = youtubeFromProvider.title
+        if (!resolvedTitle) {
+          resolvedTitle = await fetchYoutubeTitle(url)
+        }
+        const result = {
           downloadUrl: youtubeFromProvider.downloadUrl,
-          title: youtubeFromProvider.title,
+          title: resolvedTitle || `youtube-${type === 'youtube-mp3' ? 'audio' : 'video'}-${Date.now()}`,
           source: youtubeFromProvider.source,
           type,
           isDirect: true,
-        })
+        }
+        setCache(cacheKey, result)
+        return NextResponse.json(result)
       }
 
       const youtubeDirect = await tryYoutubeDirect(url, type)
       if (youtubeDirect.ok) {
-        return NextResponse.json({
+        const result = {
           downloadUrl: youtubeDirect.downloadUrl,
           title: youtubeDirect.title,
           source: youtubeDirect.source,
           type,
           isDirect: true,
-        })
+        }
+        setCache(cacheKey, result)
+        return NextResponse.json(result)
       }
     }
 
     const primary = await tryCobalt(url, type)
     if (primary.ok) {
-      return NextResponse.json({
+      let cobaltTitle = primary.title
+      if ((!cobaltTitle || cobaltTitle === 'media-file') && isYoutubeUrl(url)) {
+        cobaltTitle = await fetchYoutubeTitle(url) || cobaltTitle
+      }
+      const result = {
         downloadUrl: primary.downloadUrl,
-        title: primary.title,
+        title: cobaltTitle || `media-${Date.now()}`,
         source: primary.source,
         type,
         isDirect: true,
-      })
+      }
+      setCache(cacheKey, result)
+      return NextResponse.json(result)
     }
 
     if (type === 'instagram-video') {
       const instagramFallback = await tryInstagramEmbed(url)
       if (instagramFallback.ok) {
-        return NextResponse.json({
+        const result = {
           downloadUrl: instagramFallback.downloadUrl,
-          title: instagramFallback.title,
+          title: instagramFallback.title || `instagram-reel-${Date.now()}`,
           source: instagramFallback.source,
           type,
           isDirect: true,
-        })
+        }
+        setCache(cacheKey, result)
+        return NextResponse.json(result)
       }
 
       return NextResponse.json(

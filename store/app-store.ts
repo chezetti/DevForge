@@ -52,6 +52,10 @@ interface AppState {
   // Panel orientation
   panelOrientation: 'horizontal' | 'vertical'
   setPanelOrientation: (orientation: 'horizontal' | 'vertical') => void
+
+  // Export/Import
+  exportSettings: () => string
+  importSettings: (json: string) => boolean
 }
 
 export const useAppStore = create<AppState>()(
@@ -143,6 +147,39 @@ export const useAppStore = create<AppState>()(
       // Panel orientation
       panelOrientation: 'horizontal',
       setPanelOrientation: (orientation) => set({ panelOrientation: orientation }),
+
+      // Export/Import
+      exportSettings: () => {
+        const state = get()
+        return JSON.stringify({
+          version: 3,
+          favorites: state.favorites,
+          recentTools: state.recentTools,
+          toolHistory: state.toolHistory,
+          toolDrafts: state.toolDrafts,
+          toolDraftsSecondary: state.toolDraftsSecondary,
+          autoRun: state.autoRun,
+          panelOrientation: state.panelOrientation,
+        }, null, 2)
+      },
+      importSettings: (json: string) => {
+        try {
+          const data = JSON.parse(json)
+          if (typeof data !== 'object' || data === null) return false
+          set({
+            ...(Array.isArray(data.favorites) && { favorites: data.favorites }),
+            ...(Array.isArray(data.recentTools) && { recentTools: data.recentTools }),
+            ...(Array.isArray(data.toolHistory) && { toolHistory: data.toolHistory }),
+            ...(typeof data.toolDrafts === 'object' && data.toolDrafts && { toolDrafts: data.toolDrafts }),
+            ...(typeof data.toolDraftsSecondary === 'object' && data.toolDraftsSecondary && { toolDraftsSecondary: data.toolDraftsSecondary }),
+            ...(typeof data.autoRun === 'boolean' && { autoRun: data.autoRun }),
+            ...(typeof data.panelOrientation === 'string' && { panelOrientation: data.panelOrientation }),
+          })
+          return true
+        } catch {
+          return false
+        }
+      },
     }),
     {
       name: 'devforge-storage',

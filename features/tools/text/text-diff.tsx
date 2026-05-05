@@ -44,9 +44,10 @@ export function TextDiff() {
             rightValue={right}
             onLeftChange={setLeft}
             onRightChange={setRight}
-            leftLabel="Original"
-            rightLabel="Modified"
-            language="text"
+            leftTitle="Original"
+            rightTitle="Modified"
+            leftLanguage="plaintext"
+            rightLanguage="plaintext"
           />
         )}
       </div>

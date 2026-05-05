@@ -60,6 +60,7 @@ const MarkdownPreview = lazy(() => import("@/features/tools/text/markdown-previe
 
 const TimestampConverter = lazy(() => import("@/features/tools/datetime/timestamp-converter").then(m => ({ default: m.TimestampConverter })));
 const DateCalculator = lazy(() => import("@/features/tools/datetime/date-calculator").then(m => ({ default: m.DateCalculator })));
+const DateDiff = lazy(() => import("@/features/tools/datetime/date-calculator").then(m => ({ default: () => m.DateCalculator({ toolId: "date-diff" }) })));
 const CronParser = lazy(() => import("@/features/tools/datetime/cron-parser").then(m => ({ default: m.CronParser })));
 const IsoFormatter = lazy(() => import("@/features/tools/datetime/iso-formatter").then(m => ({ default: m.IsoFormatter })));
 const TimezoneConverter = lazy(() => import("@/features/tools/datetime/timezone-converter").then(m => ({ default: m.TimezoneConverter })));
@@ -145,7 +146,7 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "cron-parser": CronParser,
   "iso-formatter": IsoFormatter,
   "timezone-converter": TimezoneConverter,
-  "date-diff": DateCalculator,
+  "date-diff": DateDiff,
 
   // Colors
   "color-converter": ColorConverter,

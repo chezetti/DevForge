@@ -1,16 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
-import { Search, Command, PanelLeft, PanelLeftClose, ChevronRight } from 'lucide-react'
+import { Search, Command, PanelLeft, PanelLeftClose, ChevronRight, Sun, Moon } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { useAppStore } from '@/store/app-store'
 import { categoryLabels, getToolById, type ToolCategory } from '@/config/tool-registry'
 
 export function TopBar() {
   const { setCommandPaletteOpen, sidebarOpen, setSidebarOpen } = useAppStore()
+  const { theme, setTheme } = useTheme()
   const pathname = usePathname()
 
   const breadcrumbs = useMemo(() => {
@@ -42,7 +43,22 @@ export function TopBar() {
           )}
         </Button>
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <Image src="/devforge-logo.svg" alt="" width={20} height={20} className="h-5 w-5" />
+          <span
+            className="h-5 w-5 shrink-0 text-foreground"
+            style={{
+              display: 'inline-block',
+              WebkitMaskImage: 'url(/devforge-logo.svg)',
+              WebkitMaskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center',
+              maskImage: 'url(/devforge-logo.svg)',
+              maskSize: 'contain',
+              maskRepeat: 'no-repeat',
+              maskPosition: 'center',
+              backgroundColor: 'currentColor',
+            }}
+            aria-hidden="true"
+          />
           <span className="text-base font-semibold tracking-tight text-foreground">
             DevForge
           </span>
@@ -63,17 +79,29 @@ export function TopBar() {
         )}
       </div>
 
-      <Button
-        variant="outline"
-        onClick={() => setCommandPaletteOpen(true)}
-        className="h-8 px-3 gap-2 text-sm text-muted-foreground border-border bg-background hover:bg-hover hover:text-foreground shrink-0"
-      >
-        <Search className="h-3.5 w-3.5" />
-        <span className="hidden sm:inline">Search tools...</span>
-        <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-          <Command className="h-3 w-3" />K
-        </kbd>
-      </Button>
+      <div className="flex items-center gap-2 shrink-0">
+        <Button
+          variant="outline"
+          onClick={() => setCommandPaletteOpen(true)}
+          className="h-8 px-3 gap-2 text-sm text-muted-foreground border-border bg-background hover:bg-hover hover:text-foreground"
+        >
+          <Search className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Search tools...</span>
+          <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <Command className="h-3 w-3" />K
+          </kbd>
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          aria-label="Toggle theme"
+        >
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
+        </Button>
+      </div>
     </header>
   )
 }

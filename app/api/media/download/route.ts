@@ -1,5 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+const BLOCKED_HOSTNAMES = ['localhost', '0.0.0.0']
+
+function isPrivateIP(hostname: string): boolean {
+  if (BLOCKED_HOSTNAMES.includes(hostname)) return true
+  const parts = hostname.split('.').map(Number)
+  if (parts.length !== 4 || parts.some((p) => isNaN(p))) return false
+  if (parts[0] === 127) return true
+  if (parts[0] === 10) return true
+  if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true
+  if (parts[0] === 192 && parts[1] === 168) return true
+  if (parts[0] === 169 && parts[1] === 254) return true
+  if (parts[0] === 0) return true
+  return false
+}
+
 function sanitizeFileName(value: string): string {
   const clean = value
     .replace(/[<>:"/\\|?*\u0000-\u001F]/g, '')
@@ -39,6 +54,10 @@ export async function GET(request: NextRequest) {
 
   if (!['http:', 'https:'].includes(parsed.protocol)) {
     return NextResponse.json({ error: 'Unsupported URL protocol.' }, { status: 400 })
+  }
+
+  if (isPrivateIP(parsed.hostname)) {
+    return NextResponse.json({ error: 'Requests to private/internal addresses are not allowed.' }, { status: 403 })
   }
 
   try {

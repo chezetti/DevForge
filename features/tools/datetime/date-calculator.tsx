@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { calculateDateDiff, addToDate, DateUnit } from "@/utils/datetime";
 
-export function DateCalculator() {
+export function DateCalculator({ toolId = "date-calculator" }: { toolId?: string } = {}) {
   const [activeTab, setActiveTab] = useState("difference");
 
   // Difference calculator
@@ -36,7 +36,7 @@ export function DateCalculator() {
   }, [baseDate, amount, unit, operation]);
 
   return (
-    <ToolShell toolId="date-calculator">
+    <ToolShell toolId={toolId}>
       <div className="flex flex-col h-full overflow-hidden">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
           <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent px-4">

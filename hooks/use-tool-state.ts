@@ -26,7 +26,20 @@ interface UseToolStateReturn {
  * Guarantees consistent mount/autoRun/history behavior across all tools.
  */
 export function useToolState({ toolId, defaultValue = '' }: UseToolStateOptions): UseToolStateReturn {
-  const tool = getToolById(toolId)!
+  const tool = getToolById(toolId) ?? {
+    id: toolId,
+    title: toolId,
+    category: 'devutils' as const,
+    description: '',
+    keywords: [],
+    inputType: 'text' as const,
+    outputType: 'text' as const,
+    supportsLiveTransform: false,
+    supportsFileUpload: false,
+    supportsHistory: false,
+    supportsShare: false,
+    implemented: false,
+  }
   const { getToolDraft, setToolDraft, autoRun } = useAppStore()
   const isInitialLoad = useRef(true)
 

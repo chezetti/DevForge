@@ -345,7 +345,7 @@ export function getNextCronRuns(expression: string, count: number): Date[] {
   if (parts.length !== 5) return []
 
   const [minuteExpr, hourExpr, dayExpr, monthExpr, weekExpr] = parts
-  const matches = (value: number, expr: string) => {
+  const matches = (value: number, expr: string): boolean => {
     if (expr === "*") return true
     if (expr.includes(",")) return expr.split(",").some((p) => matches(value, p))
     if (expr.includes("/")) {

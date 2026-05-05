@@ -5,20 +5,24 @@ It provides many browser-based utilities for formatting, conversion, code genera
 
 ## Highlights
 
-- Category-based tool catalog (JSON, TypeScript, API, Security, Date/Time, Text, MongoDB, PostgreSQL, NestJS, Dev Utils)
+- Category-based tool catalog (JSON, TypeScript, API, Security, Date/Time, Text, MongoDB, PostgreSQL, CSS, HTML, Converters, Media, Dev Utils)
 - Fast client-side UI with reusable tool shell and editors
 - Dynamic tool routing via `/tools/{category}/{tool}`
-- Searchable navigation and command palette
+- Searchable navigation and command palette (Ctrl+K)
 - Static generation for tool pages
+- Light / Dark theme support
+- Export / Import settings between devices
+- Keyboard shortcuts (Ctrl+Enter to run, Ctrl+S to copy)
 
 ## Tech Stack
 
 - Next.js 16
 - React 19
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS 4
 - shadcn/ui + Radix UI
-- Zustand
+- Zustand (with persist middleware)
+- Monaco Editor
 - pnpm
 
 ## Getting Started
@@ -44,17 +48,35 @@ pnpm start
 
 ## Project Structure
 
-- `app/` - Next.js app router pages and layouts
-- `components/` - shared UI/layout/tool building blocks
-- `config/` - tool registry and component mapping
-- `features/tools/` - tool implementations by category
-- `store/` - application state
-- `utils/` - conversion/parsing/helper logic
+- `app/` — Next.js app router pages, layouts, and API routes
+- `components/` — shared UI, layout, and tool building blocks
+- `config/` — tool registry (`tool-registry.ts`) and component mapping (`tool-components.tsx`)
+- `features/tools/` — tool implementations organized by category
+- `hooks/` — shared React hooks (`useToolState`, `useKeyboardShortcuts`, etc.)
+- `store/` — Zustand application state
+- `utils/` — conversion, parsing, and helper logic
+- `lib/` — utility functions and Monaco theme
+
+## Adding a New Tool
+
+1. **Register** the tool in `config/tool-registry.ts` — add a `ToolMetadata` entry to the `tools` array.
+2. **Implement** the component in `features/tools/{category}/{tool-id}.tsx`.
+3. **Map** it in `config/tool-components.tsx` — add a `React.lazy` import and an entry in `TOOL_COMPONENTS`.
+4. The tool automatically gets its own route at `/tools/{category}/{tool-id}`, a sidebar entry, command palette support, and SSG.
+
+If you skip step 2–3, the tool still renders via the generic fallback workspace with basic input/output functionality.
+
+## Environment Variables
+
+| Variable | Description | Required |
+|---|---|---|
+| `MEDIA_API_URL` | Custom Cobalt-compatible media API endpoint | No |
 
 ## Notes
 
 - This project is configured for local development without vendor analytics integration.
-- Static assets were cleaned up to include only project-relevant files.
+- Media tools use server-side API routes and depend on third-party services.
+- Static assets are in `public/`.
 
 ## License
 

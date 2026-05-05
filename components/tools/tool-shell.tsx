@@ -1,8 +1,8 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useRef } from 'react'
 import { toast } from 'sonner'
-import { History, Share2, Settings2, Star } from 'lucide-react'
+import { History, Share2, Settings2, Star, Download, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -48,6 +48,7 @@ export function ToolShell({
     implemented: false,
   }
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const {
     getToolHistory,
     toggleFavorite,
@@ -56,6 +57,8 @@ export function ToolShell({
     setAutoRun,
     panelOrientation,
     setPanelOrientation,
+    exportSettings,
+    importSettings,
   } = useAppStore()
   const history = showHistory
     ? getToolHistory(safeTool.id).filter(
@@ -64,6 +67,31 @@ export function ToolShell({
       )
     : []
   const favorite = isFavorite(safeTool.id)
+
+  const handleExport = () => {
+    const data = exportSettings()
+    const blob = new Blob([data], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'devforge-settings.json'
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success('Settings exported')
+  }
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const ok = importSettings(reader.result as string)
+      if (ok) toast.success('Settings imported successfully')
+      else toast.error('Invalid settings file')
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
 
   const handleShare = async () => {
     if (typeof window === 'undefined') return
@@ -87,7 +115,7 @@ export function ToolShell({
           <h1 className="text-base sm:text-lg font-semibold text-foreground truncate">{safeTool.title}</h1>
           <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">{safeTool.description}</p>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {actions}
           <Button
             variant="ghost"
@@ -188,6 +216,15 @@ export function ToolShell({
                     Vertical
                   </Button>
                 </div>
+              </div>
+              <div className="px-3 py-2 border-t border-border flex items-center gap-2">
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 flex-1" onClick={handleExport}>
+                  <Download className="h-3 w-3" />Export
+                </Button>
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1.5 flex-1" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="h-3 w-3" />Import
+                </Button>
+                <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
               </div>
             </DropdownMenuContent>
           </DropdownMenu>

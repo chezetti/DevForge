@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Search,
   Star,
+  Workflow,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -114,7 +115,24 @@ export function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 pb-4" aria-label="Tool navigation">
+      <div className="px-2 pb-2">
+        <Link
+          href="/pipelines"
+          className={cn(
+            'flex items-center gap-2 px-2 py-1.5 text-sm rounded transition-colors duration-100',
+            pathname === '/pipelines'
+              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+              : 'text-muted-foreground hover:text-foreground hover:bg-hover'
+          )}
+        >
+          <Workflow className="h-4 w-4" />
+          <span>Pipelines</span>
+        </Link>
+      </div>
+
+      <div className="mx-2 border-b border-sidebar-border" />
+
+      <nav className="flex-1 overflow-y-auto px-2 pb-4 pt-2" aria-label="Tool navigation">
         {searchQuery ? (
           <div className="space-y-0.5">
             {filteredTools.map((tool) => (
@@ -184,20 +202,20 @@ export function Sidebar() {
                 <div key={category}>
                   <button
                     onClick={() => toggleCategory(category)}
-                    className="flex items-center gap-2 w-full px-2 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-100"
+                    className="flex items-center gap-2 w-full min-w-0 px-2 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-100"
                     aria-expanded={isExpanded}
                   >
                     <ChevronRight
                       className={cn(
-                        'h-3 w-3 transition-transform duration-100',
+                        'h-3 w-3 shrink-0 transition-transform duration-100',
                         isExpanded && 'rotate-90'
                       )}
                     />
-                    {categoryIcons[category]}
-                    <span className="uppercase tracking-wide">
+                    <span className="shrink-0">{categoryIcons[category]}</span>
+                    <span className="uppercase tracking-wide truncate">
                       {categoryLabels[category]}
                     </span>
-                    <span className="ml-auto text-[10px] tabular-nums">
+                    <span className="ml-auto shrink-0 text-[10px] tabular-nums">
                       {categoryTools.length}
                     </span>
                   </button>
