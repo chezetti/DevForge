@@ -129,15 +129,15 @@ export function DiffMerger() {
 
   return (
     <ToolShell toolId="diff-merger">
-      <div className="flex flex-col gap-4 xl:gap-6 h-full min-h-0">
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 min-h-[280px] flex-1">
+      <div className="flex flex-col gap-4 overflow-y-auto h-full">
+        {/* Editors row */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 shrink-0" style={{ height: 300 }}>
           <EditorPanel
             title="Original"
             value={original}
             onChange={setOriginal}
             language="plaintext"
             placeholder="Original text…"
-            minHeight="260px"
           />
           <EditorPanel
             title="Modified"
@@ -145,13 +145,13 @@ export function DiffMerger() {
             onChange={setModified}
             language="plaintext"
             placeholder="Modified text…"
-            minHeight="260px"
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-0 flex-1">
-          <div className="flex flex-col gap-2 border border-border rounded-lg bg-background-secondary min-h-[240px] overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 border-b border-border">
+        {/* Diff + Changes row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 shrink-0">
+          <div className="flex flex-col border border-border rounded-lg bg-background-secondary overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 border-b border-border shrink-0">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Line diff</span>
               <div className="flex gap-1">
                 <Button type="button" variant="outline" size="sm" className="h-7 text-xs" onClick={acceptAll}>
@@ -175,7 +175,7 @@ export function DiffMerger() {
                 </Button>
               </div>
             </div>
-            <ScrollArea className="flex-1 max-h-[320px]">
+            <ScrollArea className="max-h-[280px]">
               <div className="p-3 font-mono text-xs space-y-0">
                 {diff.map((part, index) => {
                   const lines = part.value.split('\n').filter((line, i, arr) => !(i === arr.length - 1 && line === ''))
@@ -200,11 +200,11 @@ export function DiffMerger() {
             </ScrollArea>
           </div>
 
-          <div className="flex flex-col gap-2 min-h-[240px]">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1">
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1 shrink-0">
               Changes ({hunkSummaries.length})
             </span>
-            <ScrollArea className="flex-1 rounded-lg border border-border max-h-[320px]">
+            <ScrollArea className="rounded-lg border border-border max-h-[280px]">
               <div className="p-3 space-y-3">
                 {hunkSummaries.length === 0 && (
                   <p className="text-sm text-muted-foreground">No differences — texts are identical.</p>
@@ -257,7 +257,10 @@ export function DiffMerger() {
           </div>
         </div>
 
-        <OutputPanel title="Merged result" value={result} language="plaintext" minHeight="220px" />
+        {/* Merged result */}
+        <div className="shrink-0" style={{ height: 260 }}>
+          <OutputPanel title="Merged result" value={result} language="plaintext" />
+        </div>
       </div>
     </ToolShell>
   )
