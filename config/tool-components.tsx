@@ -20,27 +20,45 @@ const JsonToCsv = lazy(() => import("@/features/tools/json/json-to-csv").then(m 
 const JsonToMongoose = lazy(() => import("@/features/tools/json/json-to-mongoose").then(m => ({ default: m.JsonToMongoose })));
 const JsonToSql = lazy(() => import("@/features/tools/json/json-to-sql").then(m => ({ default: m.JsonToSql })));
 const JsonPathExtractor = lazy(() => import("@/features/tools/json/json-path").then(m => ({ default: m.JsonPathExtractor })));
+const JsonToGo = lazy(() => import("@/features/tools/json/json-to-go").then(m => ({ default: m.JsonToGo })));
+const JsonSchemaGenerator = lazy(() => import("@/features/tools/json/json-schema-generator").then(m => ({ default: m.JsonSchemaGenerator })));
+const JsonToGraphql = lazy(() => import("@/features/tools/json/json-to-graphql").then(m => ({ default: m.JsonToGraphql })));
 
 const TsToJs = lazy(() => import("@/features/tools/typescript/ts-to-js").then(m => ({ default: m.TsToJs })));
 const EnumGenerator = lazy(() => import("@/features/tools/typescript/enum-generator").then(m => ({ default: m.EnumGenerator })));
 const InterfaceBuilder = lazy(() => import("@/features/tools/typescript/interface-builder").then(m => ({ default: m.InterfaceBuilder })));
 const TsAstViewer = lazy(() => import("@/features/tools/typescript/ts-ast").then(m => ({ default: m.TsAstViewer })));
 const ZodToTs = lazy(() => import("@/features/tools/typescript/zod-to-ts").then(m => ({ default: m.ZodToTs })));
+const TypeGenerator = lazy(() => import("@/features/tools/typescript/type-generator").then(m => ({ default: m.TypeGenerator })));
+const TsFormatter = lazy(() => import("@/features/tools/typescript/ts-formatter").then(m => ({ default: m.TsFormatter })));
 
 const AggregationBuilder = lazy(() => import("@/features/tools/mongodb/aggregation-builder").then(m => ({ default: m.AggregationBuilder })));
 const BsonJsonConverter = lazy(() => import("@/features/tools/mongodb/bson-json").then(m => ({ default: m.BsonJsonConverter })));
 const MongoFilterTester = lazy(() => import("@/features/tools/mongodb/mongo-filter-tester").then(m => ({ default: m.MongoFilterTester })));
 const ObjectIdGenerator = lazy(() => import("@/features/tools/mongodb/objectid-generator").then(m => ({ default: m.ObjectIdGenerator })));
+const ObjectIdParser = lazy(() => import("@/features/tools/mongodb/objectid-parser").then(m => ({ default: m.ObjectIdParser })));
+const MongoQueryBuilder = lazy(() => import("@/features/tools/mongodb/mongo-query-builder").then(m => ({ default: m.MongoQueryBuilder })));
+const SqlToMongodb = lazy(() => import("@/features/tools/mongodb/sql-to-mongodb").then(m => ({ default: m.SqlToMongodb })));
 
 const SqlFormatter = lazy(() => import("@/features/tools/postgresql/sql-formatter").then(m => ({ default: m.SqlFormatter })));
 const UuidGenerator = lazy(() => import("@/features/tools/postgresql/uuid-generator").then(m => ({ default: m.UuidGenerator })));
 const SqlQueryBuilder = lazy(() => import("@/features/tools/postgresql/sql-query-builder").then(m => ({ default: m.SqlQueryBuilder })));
 const ExplainVisualizer = lazy(() => import("@/features/tools/postgresql/explain-visualizer").then(m => ({ default: m.ExplainVisualizer })));
+const SqlToTypeorm = lazy(() => import("@/features/tools/postgresql/sql-to-typeorm").then(m => ({ default: m.SqlToTypeorm })));
+const SqlToPrisma = lazy(() => import("@/features/tools/postgresql/sql-to-prisma").then(m => ({ default: m.SqlToPrisma })));
 
 const Base64Tool = lazy(() => import("@/features/tools/security/base64").then(m => ({ default: m.Base64Tool })));
 const JwtDecoder = lazy(() => import("@/features/tools/security/jwt-decoder").then(m => ({ default: m.JwtDecoder })));
+const JwtGenerator = lazy(() => import("@/features/tools/security/jwt-generator").then(m => ({ default: m.JwtGenerator })));
+const HmacGenerator = lazy(() => import("@/features/tools/security/hmac-generator").then(m => ({ default: m.HmacGenerator })));
+const PasswordGenerator = lazy(() => import("@/features/tools/security/password-generator").then(m => ({ default: m.PasswordGenerator })));
+const PasswordStrength = lazy(() => import("@/features/tools/security/password-strength").then(m => ({ default: m.PasswordStrength })));
+const HtmlEntitiesEncoder = lazy(() => import("@/features/tools/security/html-entities").then(m => ({ default: m.HtmlEntitiesEncoder })));
 const HashGenerator = lazy(() => import("@/features/tools/security/hash-generator").then(m => ({ default: m.HashGenerator })));
 const UrlEncode = lazy(() => import("@/features/tools/security/url-encode").then(m => ({ default: m.UrlEncode })));
+const JwtBuilder = lazy(() => import("@/features/tools/security/jwt-builder").then(m => ({ default: m.JwtBuilder })));
+const CspGenerator = lazy(() => import("@/features/tools/security/csp-generator").then(m => ({ default: m.CspGenerator })));
+const HashComparator = lazy(() => import("@/features/tools/security/hash-comparator").then(m => ({ default: m.HashComparator })));
 
 const ApiTester = lazy(() => import("@/features/tools/api/api-tester").then(m => ({ default: m.ApiTester })));
 const CurlConverter = lazy(() => import("@/features/tools/api/curl-converter").then(m => ({ default: m.CurlConverter })));
@@ -49,6 +67,8 @@ const CurlToAxios = lazy(() => import("@/features/tools/api/curl-to-axios").then
 const HeadersParser = lazy(() => import("@/features/tools/api/headers-parser").then(m => ({ default: m.HeadersParser })));
 const QueryParamsBuilder = lazy(() => import("@/features/tools/api/query-params-builder").then(m => ({ default: m.QueryParamsBuilder })));
 const MockDataGenerator = lazy(() => import("@/features/tools/api/mock-data").then(m => ({ default: m.MockDataGenerator })));
+const HttpStatusCodes = lazy(() => import("@/features/tools/api/http-status-codes").then(m => ({ default: m.HttpStatusCodes })));
+const GraphqlFormatter = lazy(() => import("@/features/tools/api/graphql-formatter").then(m => ({ default: m.GraphqlFormatter })));
 
 const TextDiff = lazy(() => import("@/features/tools/text/text-diff").then(m => ({ default: m.TextDiff })));
 const CaseConverter = lazy(() => import("@/features/tools/text/case-converter").then(m => ({ default: m.CaseConverter })));
@@ -57,6 +77,13 @@ const RegexTester = lazy(() => import("@/features/tools/text/regex-tester").then
 const SlugGenerator = lazy(() => import("@/features/tools/text/slug-generator").then(m => ({ default: m.SlugGenerator })));
 const StringEscapeTool = lazy(() => import("@/features/tools/text/string-escape").then(m => ({ default: m.StringEscapeTool })));
 const MarkdownPreview = lazy(() => import("@/features/tools/text/markdown-preview").then(m => ({ default: m.MarkdownPreview })));
+const WordCounter = lazy(() => import("@/features/tools/text/word-counter").then(m => ({ default: m.WordCounter })));
+const TextAnalyzer = lazy(() => import("@/features/tools/string/text-analyzer").then(m => ({ default: m.TextAnalyzer })));
+const LineSorter = lazy(() => import("@/features/tools/text/line-sorter").then(m => ({ default: m.LineSorter })));
+const TextReverse = lazy(() => import("@/features/tools/text/text-reverse").then(m => ({ default: m.TextReverse })));
+const UnicodeLookup = lazy(() => import("@/features/tools/string/unicode-lookup").then(m => ({ default: m.UnicodeLookup })));
+const EmojiPicker = lazy(() => import("@/features/tools/string/emoji-picker").then(m => ({ default: m.EmojiPicker })));
+const DiffMerger = lazy(() => import("@/features/tools/string/diff-merger").then(m => ({ default: m.DiffMerger })));
 
 const TimestampConverter = lazy(() => import("@/features/tools/datetime/timestamp-converter").then(m => ({ default: m.TimestampConverter })));
 const DateCalculator = lazy(() => import("@/features/tools/datetime/date-calculator").then(m => ({ default: m.DateCalculator })));
@@ -64,20 +91,53 @@ const DateDiff = lazy(() => import("@/features/tools/datetime/date-calculator").
 const CronParser = lazy(() => import("@/features/tools/datetime/cron-parser").then(m => ({ default: m.CronParser })));
 const IsoFormatter = lazy(() => import("@/features/tools/datetime/iso-formatter").then(m => ({ default: m.IsoFormatter })));
 const TimezoneConverter = lazy(() => import("@/features/tools/datetime/timezone-converter").then(m => ({ default: m.TimezoneConverter })));
+const DateFormatter = lazy(() => import("@/features/tools/datetime/date-formatter").then(m => ({ default: m.DateFormatter })));
 
 const ColorConverter = lazy(() => import("@/features/tools/colors/color-converter").then(m => ({ default: m.ColorConverter })));
 const GradientGenerator = lazy(() => import("@/features/tools/colors/gradient-generator").then(m => ({ default: m.GradientGenerator })));
+const ColorPaletteGenerator = lazy(() => import("@/features/tools/colors/color-palette-generator").then(m => ({ default: m.ColorPaletteGenerator })));
 const RandomGenerator = lazy(() => import("@/features/tools/devutils/random-generator").then(m => ({ default: m.RandomGenerator })));
 const NanoIdGenerator = lazy(() => import("@/features/tools/devutils/nanoid-generator").then(m => ({ default: m.NanoIdGenerator })));
 const GitignoreGenerator = lazy(() => import("@/features/tools/devutils/gitignore-generator").then(m => ({ default: m.GitignoreGenerator })));
 const DockerfileGenerator = lazy(() => import("@/features/tools/devutils/dockerfile-generator").then(m => ({ default: m.DockerfileGenerator })));
 const ChmodCalculator = lazy(() => import("@/features/tools/devutils/chmod-calculator").then(m => ({ default: m.ChmodCalculator })));
+const EnvJson = lazy(() => import("@/features/tools/devutils/env-json").then(m => ({ default: m.EnvJson })));
+const NumberBaseConverter = lazy(() => import("@/features/tools/devutils/number-base-converter").then(m => ({ default: m.NumberBaseConverter })));
+const AsciiTable = lazy(() => import("@/features/tools/devutils/ascii-table").then(m => ({ default: m.AsciiTable })));
+const UrlParser = lazy(() => import("@/features/tools/devutils/url-parser").then(m => ({ default: m.UrlParser })));
+const CrontabBuilder = lazy(() => import("@/features/tools/devutils/crontab-builder").then(m => ({ default: m.CrontabBuilder })));
+const IpCalculator = lazy(() => import("@/features/tools/devutils/ip-calculator").then(m => ({ default: m.IpCalculator })));
+const RegexCheatsheet = lazy(() => import("@/features/tools/devutils/regex-cheatsheet").then(m => ({ default: m.RegexCheatsheet })));
 const BoxShadowGenerator = lazy(() => import("@/features/tools/css/box-shadow-generator").then(m => ({ default: m.BoxShadowGenerator })));
 const CssGridGenerator = lazy(() => import("@/features/tools/css/css-grid-generator").then(m => ({ default: m.CssGridGenerator })));
 const FlexboxGenerator = lazy(() => import("@/features/tools/css/flexbox-generator").then(m => ({ default: m.FlexboxGenerator })));
 const BorderRadiusPreview = lazy(() => import("@/features/tools/css/border-radius-preview").then(m => ({ default: m.BorderRadiusPreview })));
+const CssMinifier = lazy(() => import("@/features/tools/css/css-minifier").then(m => ({ default: m.CssMinifier })));
+const CssBeautifier = lazy(() => import("@/features/tools/css/css-beautifier").then(m => ({ default: m.CssBeautifier })));
+const CssToTailwind = lazy(() => import("@/features/tools/css/css-to-tailwind").then(m => ({ default: m.CssToTailwind })));
+const CssUnitsConverter = lazy(() => import("@/features/tools/css/css-units-converter").then(m => ({ default: m.CssUnitsConverter })));
+const PxRemConverter = lazy(() => import("@/features/tools/css/px-rem-converter").then(m => ({ default: m.PxRemConverter })));
+const AspectRatioCalculator = lazy(() => import("@/features/tools/css/aspect-ratio-calculator").then(m => ({ default: m.AspectRatioCalculator })));
 const HtmlPreview = lazy(() => import("@/features/tools/html/html-preview").then(m => ({ default: m.HtmlPreview })));
+const HtmlToJsx = lazy(() => import("@/features/tools/html/html-to-jsx").then(m => ({ default: m.HtmlToJsx })));
+const HtmlMinifier = lazy(() => import("@/features/tools/html/html-minifier").then(m => ({ default: m.HtmlMinifier })));
+const HtmlBeautifier = lazy(() => import("@/features/tools/html/html-beautifier").then(m => ({ default: m.HtmlBeautifier })));
+const HtmlToMarkdown = lazy(() => import("@/features/tools/html/html-to-markdown").then(m => ({ default: m.HtmlToMarkdown })));
+const MarkdownToHtml = lazy(() => import("@/features/tools/html/markdown-to-html").then(m => ({ default: m.MarkdownToHtml })));
+const HtmlTableGenerator = lazy(() => import("@/features/tools/html/html-table-generator").then(m => ({ default: m.HtmlTableGenerator })));
+const MetaTagGenerator = lazy(() => import("@/features/tools/html/meta-tag-generator").then(m => ({ default: m.MetaTagGenerator })));
+const OpenGraphPreview = lazy(() => import("@/features/tools/html/open-graph-preview").then(m => ({ default: m.OpenGraphPreview })));
 const UnitConverter = lazy(() => import("@/features/tools/converter/unit-converter").then(m => ({ default: m.UnitConverter })));
+const XmlToJson = lazy(() => import("@/features/tools/converter/xml-to-json").then(m => ({ default: m.XmlToJson })));
+const CsvToJson = lazy(() => import("@/features/tools/converter/csv-to-json").then(m => ({ default: m.CsvToJson })));
+const YamlToToml = lazy(() => import("@/features/tools/converter/yaml-to-toml").then(m => ({ default: m.YamlToToml })));
+const TomlToJson = lazy(() => import("@/features/tools/converter/toml-to-json").then(m => ({ default: m.TomlToJson })));
+const BinaryText = lazy(() => import("@/features/tools/converter/binary-text").then(m => ({ default: m.BinaryText })));
+const SvgToCss = lazy(() => import("@/features/tools/converter/svg-to-css").then(m => ({ default: m.SvgToCss })));
+const MorseCode = lazy(() => import("@/features/tools/converter/morse-code").then(m => ({ default: m.MorseCode })));
+const RomanNumeral = lazy(() => import("@/features/tools/converter/roman-numeral").then(m => ({ default: m.RomanNumeral })));
+const ImageToBase64 = lazy(() => import("@/features/tools/converter/image-to-base64").then(m => ({ default: m.ImageToBase64 })));
+const JsonToXml = lazy(() => import("@/features/tools/converter/json-to-xml").then(m => ({ default: m.JsonToXml })));
 const YouTubeDownloader = lazy(() => import("@/features/tools/media/youtube-downloader").then(m => ({ default: m.YouTubeDownloader })));
 const InstagramDownloader = lazy(() => import("@/features/tools/media/instagram-downloader").then(m => ({ default: m.InstagramDownloader })));
 const YouTubeToMp3 = lazy(() => import("@/features/tools/media/youtube-to-mp3").then(m => ({ default: m.YouTubeToMp3 })));
@@ -96,6 +156,9 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "json-to-mongoose": JsonToMongoose,
   "json-to-sql": JsonToSql,
   "json-path": JsonPathExtractor,
+  "json-to-go": JsonToGo,
+  "json-schema-generator": JsonSchemaGenerator,
+  "json-to-graphql": JsonToGraphql,
 
   // TypeScript
   "ts-to-js": TsToJs,
@@ -103,24 +166,39 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "interface-builder": InterfaceBuilder,
   "ts-ast": TsAstViewer,
   "zod-to-ts": ZodToTs,
+  "type-generator": TypeGenerator,
+  "ts-formatter": TsFormatter,
 
   // PostgreSQL
   "sql-formatter": SqlFormatter,
   "uuid-generator": UuidGenerator,
   "sql-query-builder": SqlQueryBuilder,
   "explain-visualizer": ExplainVisualizer,
+  "sql-to-typeorm": SqlToTypeorm,
+  "sql-to-prisma": SqlToPrisma,
 
   // MongoDB
   "objectid-generator": ObjectIdGenerator,
+  "objectid-parser": ObjectIdParser,
+  "mongo-query-builder": MongoQueryBuilder,
   "aggregation-builder": AggregationBuilder,
   "bson-json": BsonJsonConverter,
   "mongo-filter-tester": MongoFilterTester,
+  "sql-to-mongodb": SqlToMongodb,
 
   // Security
   "base64": Base64Tool,
   "jwt-decoder": JwtDecoder,
+  "jwt-generator": JwtGenerator,
+  "hmac-generator": HmacGenerator,
+  "password-generator": PasswordGenerator,
+  "password-strength": PasswordStrength,
+  "html-entities-encode": HtmlEntitiesEncoder,
   "hash-generator": HashGenerator,
   "url-encode": UrlEncode,
+  "jwt-builder": JwtBuilder,
+  "csp-generator": CspGenerator,
+  "hash-comparator": HashComparator,
 
   // API
   "api-tester": ApiTester,
@@ -130,6 +208,8 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "headers-parser": HeadersParser,
   "query-params-builder": QueryParamsBuilder,
   "mock-data": MockDataGenerator,
+  "http-status-codes": HttpStatusCodes,
+  "graphql-formatter": GraphqlFormatter,
 
   // Text
   "text-diff": TextDiff,
@@ -139,6 +219,13 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "slug-generator": SlugGenerator,
   "string-escape": StringEscapeTool,
   "markdown-preview": MarkdownPreview,
+  "word-counter": WordCounter,
+  "text-analyzer": TextAnalyzer,
+  "line-sorter": LineSorter,
+  "text-reverse": TextReverse,
+  "unicode-lookup": UnicodeLookup,
+  "emoji-picker": EmojiPicker,
+  "diff-merger": DiffMerger,
 
   // DateTime
   "timestamp-converter": TimestampConverter,
@@ -146,11 +233,13 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "cron-parser": CronParser,
   "iso-formatter": IsoFormatter,
   "timezone-converter": TimezoneConverter,
+  "date-formatter": DateFormatter,
   "date-diff": DateDiff,
 
   // Colors
   "color-converter": ColorConverter,
   "gradient-generator": GradientGenerator,
+  "color-palette-generator": ColorPaletteGenerator,
 
   // Dev Utils
   "random-generator": RandomGenerator,
@@ -158,18 +247,49 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "gitignore-generator": GitignoreGenerator,
   "dockerfile-generator": DockerfileGenerator,
   "chmod-calculator": ChmodCalculator,
+  "env-json": EnvJson,
+  "number-base-converter": NumberBaseConverter,
+  "ascii-table": AsciiTable,
+  "url-parser": UrlParser,
+  "crontab-builder": CrontabBuilder,
+  "ip-calculator": IpCalculator,
+  "regex-cheatsheet": RegexCheatsheet,
 
   // CSS
   "box-shadow-generator": BoxShadowGenerator,
   "css-grid-generator": CssGridGenerator,
   "flexbox-generator": FlexboxGenerator,
   "border-radius-preview": BorderRadiusPreview,
+  "css-minifier": CssMinifier,
+  "css-beautifier": CssBeautifier,
+  "css-to-tailwind": CssToTailwind,
+  "css-units-converter": CssUnitsConverter,
+  "px-rem-converter": PxRemConverter,
+  "aspect-ratio-calculator": AspectRatioCalculator,
 
   // HTML
   "html-preview": HtmlPreview,
+  "html-to-jsx": HtmlToJsx,
+  "html-minifier": HtmlMinifier,
+  "html-beautifier": HtmlBeautifier,
+  "html-to-markdown": HtmlToMarkdown,
+  "markdown-to-html": MarkdownToHtml,
+  "html-table-generator": HtmlTableGenerator,
+  "meta-tag-generator": MetaTagGenerator,
+  "open-graph-preview": OpenGraphPreview,
 
   // Converter
   "unit-converter": UnitConverter,
+  "xml-to-json": XmlToJson,
+  "csv-to-json": CsvToJson,
+  "yaml-to-toml": YamlToToml,
+  "toml-to-json": TomlToJson,
+  "binary-text": BinaryText,
+  "svg-to-css": SvgToCss,
+  "morse-code": MorseCode,
+  "roman-numeral": RomanNumeral,
+  "image-to-base64": ImageToBase64,
+  "json-to-xml": JsonToXml,
 
   // Media
   "youtube-downloader": YouTubeDownloader,
@@ -204,7 +324,7 @@ const TOOL_EXAMPLES: Record<string, string> = {
   "password-strength": "MyP@ssw0rd!2024",
   "api-tester": "GET https://jsonplaceholder.typicode.com/posts/1",
   "http-status-codes": "404",
-  "graphql-formatter": "query{user(id:1){name email posts{title body}}}",
+  "graphql-formatter": "query GetUser($id:ID!){user(id:$id){name email posts(limit:3){title body}}}",
   "word-counter": "The quick brown fox jumps over the lazy dog.\nPack my box with five dozen liquor jugs.",
   "line-sorter": "banana\napple\ncherry\ndate\nelderberry\nfig\ngrape",
   "text-reverse": "Hello, World! This is a test.",
@@ -430,66 +550,6 @@ function buildFallbackOutput(toolId: string, input: string): string {
       const body = rows.slice(1).map((row) => `  <tr>\n${row.map((c) => `    <td>${c}</td>`).join("\n")}\n  </tr>`).join("\n")
       return `<table>\n  <thead>\n  <tr>\n${header}\n  </tr>\n  </thead>\n  <tbody>\n${body}\n  </tbody>\n</table>`
     }
-    case "xml-to-json": {
-      const tagMap: Record<string, string> = {}
-      const tagRegex = /<(\w+)(?:\s[^>]*)?>([^<]*)<\/\1>/g
-      let m
-      while ((m = tagRegex.exec(t)) !== null) tagMap[m[1]] = m[2]
-      return Object.keys(tagMap).length ? JSON.stringify(tagMap, null, 2) : '{\n  "note": "Paste XML to convert"\n}'
-    }
-    case "csv-to-json": {
-      const rows = t.split("\n").filter(Boolean)
-      if (rows.length < 2) return "[]"
-      const headers = rows[0].split(",").map((h) => h.trim())
-      const data = rows.slice(1).map((row) => {
-        const cols = row.split(",").map((c) => c.trim())
-        const obj: Record<string, string> = {}
-        headers.forEach((h, i) => { obj[h] = cols[i] || "" })
-        return obj
-      })
-      return JSON.stringify(data, null, 2)
-    }
-    case "yaml-to-toml": {
-      const result: string[] = []
-      let section = ""
-      for (const line of t.split("\n")) {
-        const trimmed = line.trim()
-        if (!trimmed || trimmed.startsWith("#")) continue
-        if (!line.startsWith(" ") && trimmed.endsWith(":")) {
-          section = trimmed.slice(0, -1)
-          result.push(`\n[${section}]`)
-        } else {
-          const [key, ...vals] = trimmed.split(":")
-          const val = vals.join(":").trim()
-          const numVal = Number(val)
-          result.push(`${key.trim()} = ${isNaN(numVal) ? `"${val}"` : numVal}`)
-        }
-      }
-      return result.join("\n").trim()
-    }
-    case "toml-to-json": {
-      const obj: Record<string, Record<string, string | number>> = {}
-      let sec = "_root"
-      for (const line of t.split("\n")) {
-        const trimmed = line.trim()
-        if (!trimmed || trimmed.startsWith("#")) continue
-        const secMatch = trimmed.match(/^\[(\w+)]$/)
-        if (secMatch) { sec = secMatch[1]; obj[sec] = obj[sec] || {}; continue }
-        const kvMatch = trimmed.match(/^(\w+)\s*=\s*(.+)$/)
-        if (kvMatch) {
-          const val = kvMatch[2].replace(/^"|"$/g, "")
-          const num = Number(val)
-          if (!obj[sec]) obj[sec] = {}
-          obj[sec][kvMatch[1]] = isNaN(num) ? val : num
-        }
-      }
-      return JSON.stringify(obj, null, 2)
-    }
-    case "binary-text":
-      if (/^[01\s]+$/.test(t)) return t.split(" ").map((b) => String.fromCharCode(parseInt(b, 2))).join("")
-      return t.split("").map((c) => c.charCodeAt(0).toString(2).padStart(8, "0")).join(" ")
-    case "svg-to-css":
-      return `background-image: url("data:image/svg+xml,${encodeURIComponent(t)}");\nbackground-repeat: no-repeat;\nbackground-size: contain;`
     case "unit-converter": {
       const um = t.match(/^([\d.]+)\s*(kg|lb|km|mi|m|ft|°?[CF]|celsius|fahrenheit)/i)
       if (!um) return "Enter a value with unit: 100 kg, 5 mi, 32 °F"
@@ -503,30 +563,6 @@ function buildFallbackOutput(toolId: string, input: string): string {
       if (u === "°c" || u === "celsius") return `${v} °C = ${(v * 9 / 5 + 32).toFixed(2)} °F`
       if (u === "°f" || u === "fahrenheit") return `${v} °F = ${((v - 32) * 5 / 9).toFixed(2)} °C`
       return t
-    }
-    case "morse-code": {
-      const morseMap: Record<string, string> = { A: ".-", B: "-...", C: "-.-.", D: "-..", E: ".", F: "..-.", G: "--.", H: "....", I: "..", J: ".---", K: "-.-", L: ".-..", M: "--", N: "-.", O: "---", P: ".--.", Q: "--.-", R: ".-.", S: "...", T: "-", U: "..-", V: "...-", W: ".--", X: "-..-", Y: "-.--", Z: "--..", "0": "-----", "1": ".----", "2": "..---", "3": "...--", "4": "....-", "5": ".....", "6": "-....", "7": "--...", "8": "---..", "9": "----." }
-      const reverseMorse: Record<string, string> = {}; for (const [k, v] of Object.entries(morseMap)) reverseMorse[v] = k
-      if (/^[.\-\s/]+$/.test(t)) return t.split(" / ").map((w) => w.split(" ").map((c) => reverseMorse[c] || "?").join("")).join(" ")
-      return t.toUpperCase().split("").map((c) => c === " " ? "/" : morseMap[c] || "").join(" ")
-    }
-    case "roman-numeral": {
-      const num = parseInt(t)
-      if (!isNaN(num) && num > 0 && num < 4000) {
-        const vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
-        const syms = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
-        let result = "", n = num
-        for (let i = 0; i < vals.length; i++) { while (n >= vals[i]) { result += syms[i]; n -= vals[i] } }
-        return `${num} → ${result}`
-      }
-      const romanMap: Record<string, number> = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 }
-      let total = 0
-      const upper = t.toUpperCase()
-      for (let i = 0; i < upper.length; i++) {
-        const curr = romanMap[upper[i]] || 0, next = romanMap[upper[i + 1]] || 0
-        total += curr < next ? -curr : curr
-      }
-      return total > 0 ? `${t} → ${total}` : "Enter a number or Roman numeral"
     }
     default:
       return input
@@ -553,10 +589,6 @@ export function getToolComponent(toolId: string): ComponentType | null {
       return (
         <ToolShell tool={tool} showHistory={false}>
           <div className="flex flex-col h-full gap-4">
-            <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground bg-muted/30 border border-border rounded">
-              <span className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-medium uppercase tracking-wide">Basic</span>
-              <span>This tool provides basic functionality. A full-featured version is coming soon.</span>
-            </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
               <EditorPanel
                 value={input}
