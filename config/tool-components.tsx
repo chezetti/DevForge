@@ -137,7 +137,9 @@ const SvgToCss = lazy(() => import("@/features/tools/converter/svg-to-css").then
 const MorseCode = lazy(() => import("@/features/tools/converter/morse-code").then(m => ({ default: m.MorseCode })));
 const RomanNumeral = lazy(() => import("@/features/tools/converter/roman-numeral").then(m => ({ default: m.RomanNumeral })));
 const ImageToBase64 = lazy(() => import("@/features/tools/converter/image-to-base64").then(m => ({ default: m.ImageToBase64 })));
+const ImageConverter = lazy(() => import("@/features/tools/converter/image-converter").then(m => ({ default: m.ImageConverter })));
 const JsonToXml = lazy(() => import("@/features/tools/converter/json-to-xml").then(m => ({ default: m.JsonToXml })));
+const OpenRouterModels = lazy(() => import("@/features/tools/ai/openrouter-models").then(m => ({ default: m.OpenRouterModels })));
 const YouTubeDownloader = lazy(() => import("@/features/tools/media/youtube-downloader").then(m => ({ default: m.YouTubeDownloader })));
 const InstagramDownloader = lazy(() => import("@/features/tools/media/instagram-downloader").then(m => ({ default: m.InstagramDownloader })));
 const YouTubeToMp3 = lazy(() => import("@/features/tools/media/youtube-to-mp3").then(m => ({ default: m.YouTubeToMp3 })));
@@ -289,7 +291,11 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "morse-code": MorseCode,
   "roman-numeral": RomanNumeral,
   "image-to-base64": ImageToBase64,
+  "image-converter": ImageConverter,
   "json-to-xml": JsonToXml,
+
+  // AI
+  "openrouter-models": OpenRouterModels,
 
   // Media
   "youtube-downloader": YouTubeDownloader,

@@ -17,6 +17,7 @@ import {
   Code,
   ArrowLeftRight,
   Film,
+  BrainCircuit,
   ChevronRight,
   Search,
   Star,
@@ -47,6 +48,7 @@ const categoryIcons: Record<ToolCategory, React.ReactNode> = {
   html: <Code className="h-4 w-4" />,
   converter: <ArrowLeftRight className="h-4 w-4" />,
   media: <Film className="h-4 w-4" />,
+  ai: <BrainCircuit className="h-4 w-4" />,
 }
 
 export function Sidebar() {

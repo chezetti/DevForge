@@ -16,6 +16,7 @@ import {
   Code,
   ArrowLeftRight,
   Film,
+  BrainCircuit,
 } from 'lucide-react'
 import {
   CommandDialog,
@@ -48,6 +49,7 @@ const categoryIcons: Record<ToolCategory, React.ReactNode> = {
   html: <Code className="h-4 w-4" />,
   converter: <ArrowLeftRight className="h-4 w-4" />,
   media: <Film className="h-4 w-4" />,
+  ai: <BrainCircuit className="h-4 w-4" />,
 }
 
 export function CommandPalette() {

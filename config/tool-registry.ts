@@ -12,6 +12,7 @@ export type ToolCategory =
   | 'html'
   | 'converter'
   | 'media'
+  | 'ai'
 
 export interface ToolMetadata {
   id: string
@@ -42,6 +43,7 @@ export const categoryLabels: Record<ToolCategory, string> = {
   html: 'HTML / Markup',
   converter: 'Converters',
   media: 'Media',
+  ai: 'AI Models',
 }
 
 export const categoryIcons: Record<ToolCategory, string> = {
@@ -58,6 +60,7 @@ export const categoryIcons: Record<ToolCategory, string> = {
   html: 'Code',
   converter: 'ArrowLeftRight',
   media: 'Film',
+  ai: 'BrainCircuit',
 }
 
 export const tools: ToolMetadata[] = [
@@ -1765,6 +1768,20 @@ export const tools: ToolMetadata[] = [
     implemented: true,
   },
   {
+    id: 'image-converter',
+    title: 'Image Converter',
+    category: 'converter',
+    description: 'Convert images between PNG, JPG, WebP and SVG wrapper formats',
+    keywords: ['image', 'png', 'jpg', 'jpeg', 'webp', 'svg', 'convert'],
+    inputType: 'form',
+    outputType: 'preview',
+    supportsLiveTransform: false,
+    supportsFileUpload: true,
+    supportsHistory: false,
+    supportsShare: true,
+    implemented: true,
+  },
+  {
     id: 'json-to-xml',
     title: 'JSON to XML',
     category: 'converter',
@@ -1775,6 +1792,22 @@ export const tools: ToolMetadata[] = [
     supportsLiveTransform: true,
     supportsFileUpload: true,
     supportsHistory: true,
+    supportsShare: true,
+    implemented: true,
+  },
+
+  // AI Model Tools
+  {
+    id: 'openrouter-models',
+    title: 'OpenRouter Models',
+    category: 'ai',
+    description: 'Parse AI model capabilities, token prices and request costs from OpenRouter',
+    keywords: ['ai', 'llm', 'models', 'openrouter', 'pricing', 'tokens', 'compare'],
+    inputType: 'form',
+    outputType: 'preview',
+    supportsLiveTransform: false,
+    supportsFileUpload: false,
+    supportsHistory: false,
     supportsShare: true,
     implemented: true,
   },
