@@ -27,7 +27,7 @@ export function TopBar() {
   }, [pathname])
 
   return (
-    <header className="h-12 border-b border-border bg-background flex items-center justify-between px-4">
+    <header className="h-12 border-b border-border glass-surface flex items-center justify-between px-4">
       <div className="flex items-center gap-3 min-w-0">
         <Button
           variant="ghost"

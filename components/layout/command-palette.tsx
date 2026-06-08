@@ -96,7 +96,7 @@ export function CommandPalette() {
       open={commandPaletteOpen}
       onOpenChange={setCommandPaletteOpen}
       showCloseButton={false}
-      className="w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] sm:max-w-2xl"
+      className="glass-panel **:[[cmdk-root]]:bg-transparent w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] sm:max-w-2xl"
     >
       <CommandInput
         placeholder="Search tools..."
@@ -113,12 +113,12 @@ export function CommandPalette() {
                 key={tool!.id}
                 value={tool!.id}
                 onSelect={() => handleSelect(tool!.id)}
-                className="cursor-pointer"
+                className="cursor-pointer rounded-md transition-colors data-[selected=true]:bg-foreground/10 data-[selected=true]:text-foreground data-[selected=true]:ring-1 data-[selected=true]:ring-foreground/15"
               >
                 {categoryIcons[tool!.category]}
                 <div className="ml-2 flex-1 min-w-0">
                   <span>{tool!.title}</span>
-                  <p className="text-xs text-muted-foreground/60 truncate">{tool!.description}</p>
+                  <p className="text-xs text-muted-foreground truncate">{tool!.description}</p>
                 </div>
                 <span className="ml-auto text-xs text-muted-foreground shrink-0">
                   {categoryLabels[tool!.category]}
@@ -139,12 +139,12 @@ export function CommandPalette() {
                   key={tool.id}
                   value={`${tool.id} ${tool.title} ${tool.keywords.join(' ')}`}
                   onSelect={() => handleSelect(tool.id)}
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-md transition-colors data-[selected=true]:bg-foreground/10 data-[selected=true]:text-foreground data-[selected=true]:ring-1 data-[selected=true]:ring-foreground/15"
                 >
                   {categoryIcons[tool.category]}
                   <div className="ml-2 flex-1 min-w-0">
                     <span>{tool.title}</span>
-                    <p className="text-xs text-muted-foreground/60 truncate">{tool.description}</p>
+                    <p className="text-xs text-muted-foreground truncate">{tool.description}</p>
                   </div>
                   {!tool.implemented && (
                     <span className="ml-auto text-[10px] text-muted-foreground shrink-0">

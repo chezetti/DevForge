@@ -1,7 +1,7 @@
 "use client";
 
 import { lazy, Suspense, ComponentType, useMemo, useState } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getToolById } from "@/config/tool-registry";
 import { ToolShell } from "@/components/tools/tool-shell";
 import { EditorPanel } from "@/components/tools/editor-panel";
@@ -304,9 +304,31 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
 };
 
 function ToolLoading() {
+  // Skeleton that mirrors the ToolShell header + two-pane editor/output layout,
+  // so lazy-loading a (heavy, Monaco-based) tool reserves space and avoids layout shift.
   return (
-    <div className="flex items-center justify-center h-full">
-      <Spinner className="h-8 w-8" />
+    <div className="flex flex-col h-full min-h-0" aria-busy="true" aria-label="Loading tool">
+      <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-border">
+        <div className="flex flex-col gap-2 min-w-0">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-3 w-64 max-w-[60vw]" />
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Skeleton className="h-8 w-8 rounded-md" />
+          <Skeleton className="h-8 w-8 rounded-md" />
+          <Skeleton className="h-8 w-8 rounded-md" />
+        </div>
+      </div>
+      <div className="flex-1 min-h-0 p-3 sm:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full min-h-[320px]">
+          {[0, 1].map((i) => (
+            <div key={i} className="flex flex-col gap-3 border border-border rounded bg-background-secondary p-3">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="flex-1 w-full min-h-[240px]" />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

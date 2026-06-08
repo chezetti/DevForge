@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
 import { ToolShell } from '@/components/tools/tool-shell'
 import { EditorPanel } from '@/components/tools/editor-panel'
 import { OutputPanel } from '@/components/tools/output-panel'
@@ -61,6 +62,9 @@ export function JsonMinifier() {
     [addToolHistory, tool.id]
   )
 
+  // Debounce the live (autoRun) transform to avoid re-parsing on every keystroke.
+  const debouncedProcess = useDebouncedCallback((value: string) => processJson(value), 200)
+
   useEffect(() => {
     const draft = getToolDraft(tool.id)
     const initial = draft || EXAMPLE
@@ -75,10 +79,10 @@ export function JsonMinifier() {
       setInput(value)
       setToolDraft(tool.id, value)
       if (autoRun) {
-        processJson(value)
+        debouncedProcess(value)
       }
     },
-    [setToolDraft, tool.id, autoRun, processJson]
+    [setToolDraft, tool.id, autoRun, debouncedProcess]
   )
 
   const handleHistorySelect = useCallback(
@@ -107,7 +111,7 @@ export function JsonMinifier() {
         />
         <div className="flex flex-col gap-4">
           {stats.original > 0 && (
-            <div className="flex items-center gap-4 text-xs text-muted-foreground px-1">
+            <div className="flex items-center gap-4 text-xs text-muted-foreground px-1 tabular-nums">
               <span>Original: {stats.original.toLocaleString()} chars</span>
               <span>Minified: {stats.minified.toLocaleString()} chars</span>
               <span className="text-success-foreground">Saved: {savings}%</span>

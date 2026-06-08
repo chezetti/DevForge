@@ -56,7 +56,7 @@ export function OutputPanel({
 
   return (
     <div className={`flex flex-col h-full min-h-0 border border-border rounded bg-background-secondary ${className}`}>
-      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border glass-surface">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             {title}
@@ -155,7 +155,7 @@ export function OutputPanel({
             }}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full min-h-[200px] gap-3">
+          <div className="flex flex-col items-center justify-center h-full min-h-[200px] gap-3" role="status" aria-live="polite">
             <FileOutput className="h-8 w-8 text-muted-foreground/40" />
             <div className="text-center">
               <p className="text-sm text-muted-foreground">No output yet</p>

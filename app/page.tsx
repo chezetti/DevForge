@@ -126,8 +126,15 @@ export default function HomePage() {
 
   return (
     <AppShell>
-      <div className="flex-1 overflow-auto">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12">
+      <div className="relative flex-1 overflow-auto">
+        {/* Lava lamp — slow drifting neon blobs that glass surfaces refract */}
+        <div className="lava-lamp" aria-hidden="true">
+          <span className="lava-blob lava-blob-1" />
+          <span className="lava-blob lava-blob-2" />
+          <span className="lava-blob lava-blob-3" />
+          <span className="lava-blob lava-blob-4" />
+        </div>
+        <div className="relative z-10 max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12">
           {/* Hero Section */}
           <div className="text-center mb-8 sm:mb-12">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-4 text-balance">
@@ -146,12 +153,12 @@ export default function HomePage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 placeholder="Search tools... (Ctrl+K)"
-                className="pl-10 sm:pl-12 h-10 sm:h-12 text-sm sm:text-base"
+                className="pl-10 sm:pl-12 h-10 sm:h-12 text-sm sm:text-base glass-surface border-border focus-visible:border-primary/50"
               />
 
               {/* Search Results Dropdown */}
               {showSearchDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg z-50 max-h-80 overflow-auto">
+                <div className="absolute top-full left-0 right-0 mt-2 glass-panel rounded-lg z-50 max-h-80 overflow-auto">
                   {filteredTools.length > 0 ? (
                     filteredTools.map((tool) => (
                       <button
@@ -180,20 +187,20 @@ export default function HomePage() {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-8 sm:mb-12">
-            <div className="p-3 sm:p-4 rounded-lg bg-muted/30 border border-border text-center">
-              <p className="text-2xl sm:text-3xl font-bold">{allTools.length}</p>
+            <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
+              <p className="text-2xl sm:text-3xl font-bold tabular-nums">{allTools.length}</p>
               <p className="text-xs sm:text-sm text-muted-foreground">Total Tools</p>
             </div>
-            <div className="p-3 sm:p-4 rounded-lg bg-muted/30 border border-border text-center">
-              <p className="text-2xl sm:text-3xl font-bold">{TOOL_REGISTRY.length}</p>
+            <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
+              <p className="text-2xl sm:text-3xl font-bold tabular-nums">{TOOL_REGISTRY.length}</p>
               <p className="text-xs sm:text-sm text-muted-foreground">Categories</p>
             </div>
-            <div className="p-3 sm:p-4 rounded-lg bg-muted/30 border border-border text-center">
-              <p className="text-2xl sm:text-3xl font-bold">{favorites.length}</p>
+            <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
+              <p className="text-2xl sm:text-3xl font-bold tabular-nums">{favorites.length}</p>
               <p className="text-xs sm:text-sm text-muted-foreground">Favorites</p>
             </div>
-            <div className="p-3 sm:p-4 rounded-lg bg-muted/30 border border-border text-center">
-              <p className="text-2xl sm:text-3xl font-bold">{recentTools.length}</p>
+            <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
+              <p className="text-2xl sm:text-3xl font-bold tabular-nums">{recentTools.length}</p>
               <p className="text-xs sm:text-sm text-muted-foreground">Recently Used</p>
             </div>
           </div>
@@ -265,7 +272,7 @@ export default function HomePage() {
                 return (
                   <div
                     key={category.slug}
-                    className="block p-4 sm:p-6 rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
+                    className="block p-4 sm:p-6 rounded-lg glass-panel transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-xl"
                   >
                     <Link
                       href={`/tools#${category.slug}`}
@@ -339,7 +346,7 @@ function ToolCard({ tool, onClick, onToggleFavorite }: ToolCardProps) {
           onClick();
         }
       }}
-      className="group text-left p-4 rounded-lg border border-border bg-card hover:bg-muted/30 transition-all hover:border-primary/50 cursor-pointer"
+      className="group text-left p-4 rounded-lg glass-panel transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-xl cursor-pointer"
     >
       <div className="flex items-start justify-between mb-2">
         <h3 className="font-medium group-hover:text-primary transition-colors">

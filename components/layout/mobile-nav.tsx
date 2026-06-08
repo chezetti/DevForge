@@ -30,7 +30,7 @@ export function MobileNav() {
   const categories = getCategories()
 
   return (
-    <header className="md:hidden h-12 border-b border-border bg-background flex items-center justify-between px-4">
+    <header className="md:hidden h-12 border-b border-border glass-surface flex items-center justify-between px-4">
       <div className="flex items-center gap-3">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
@@ -43,7 +43,7 @@ export function MobileNav() {
               <Menu className="h-4 w-4" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[280px] bg-sidebar p-0">
+          <SheetContent side="left" className="w-[280px] glass-surface p-0">
             <div className="flex items-center p-4 pr-12 border-b border-border">
               <span className="font-semibold">DevForge</span>
             </div>

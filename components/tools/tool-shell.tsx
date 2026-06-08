@@ -110,7 +110,7 @@ export function ToolShell({
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-border glass-surface">
         <div className="flex flex-col gap-0.5 min-w-0">
           <h1 className="text-base sm:text-lg font-semibold text-foreground truncate">{safeTool.title}</h1>
           <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">{safeTool.description}</p>
@@ -139,7 +139,7 @@ export function ToolShell({
                   <History className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 bg-surface border-border">
+              <DropdownMenuContent align="end" className="w-64 glass-panel">
                 <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
                   Recent inputs
                 </div>
@@ -182,7 +182,7 @@ export function ToolShell({
                 <Settings2 className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 glass-panel">
               <div className="px-3 py-2 border-b border-border">
                 <p className="text-xs font-medium text-muted-foreground">Tool settings</p>
               </div>

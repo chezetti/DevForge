@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
 import { ToolShell } from '@/components/tools/tool-shell'
 import { EditorPanel } from '@/components/tools/editor-panel'
 import { OutputPanel } from '@/components/tools/output-panel'
@@ -64,15 +65,15 @@ export function JsonBeautifier() {
     [indent, addToolHistory, tool.id]
   )
 
+  // Debounce the live (autoRun) transform so large JSON doesn't re-parse on every keystroke.
+  const debouncedProcess = useDebouncedCallback((value: string) => processJson(value), 200)
+
   const handleInputChange = useCallback(
     (value: string) => {
       setInput(value)
       setToolDraft(tool.id, value)
-      if (autoRun) {
-        processJson(value)
-      }
     },
-    [setToolDraft, tool.id, autoRun, processJson]
+    [setToolDraft, tool.id]
   )
 
   const handleFormat = useCallback(() => {
@@ -97,10 +98,11 @@ export function JsonBeautifier() {
     setIsInitialLoad(false)
   }, [getToolDraft, tool.id, processJson])
 
+  // autoRun: re-run (debounced) when input or formatting options change.
   useEffect(() => {
     if (isInitialLoad) return
-    if (autoRun && input) processJson(input)
-  }, [indent, autoRun, input, processJson, isInitialLoad])
+    if (autoRun && input) debouncedProcess(input)
+  }, [indent, autoRun, input, debouncedProcess, isInitialLoad])
 
   return (
     <ToolShell

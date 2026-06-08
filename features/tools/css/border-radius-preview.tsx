@@ -23,20 +23,20 @@ export function BorderRadiusPreview() {
         <div className="border border-border rounded bg-background-secondary p-4 space-y-4 min-h-[360px]">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label>Top Left</Label>
-              <Input type="number" className="no-spin" value={topLeft} onChange={(e) => setTopLeft(Number(e.target.value) || 0)} />
+              <Label htmlFor="br-top-left">Top Left</Label>
+              <Input id="br-top-left" type="number" className="no-spin" value={topLeft} onChange={(e) => setTopLeft(Number(e.target.value) || 0)} />
             </div>
             <div className="space-y-2">
-              <Label>Top Right</Label>
-              <Input type="number" className="no-spin" value={topRight} onChange={(e) => setTopRight(Number(e.target.value) || 0)} />
+              <Label htmlFor="br-top-right">Top Right</Label>
+              <Input id="br-top-right" type="number" className="no-spin" value={topRight} onChange={(e) => setTopRight(Number(e.target.value) || 0)} />
             </div>
             <div className="space-y-2">
-              <Label>Bottom Right</Label>
-              <Input type="number" className="no-spin" value={bottomRight} onChange={(e) => setBottomRight(Number(e.target.value) || 0)} />
+              <Label htmlFor="br-bottom-right">Bottom Right</Label>
+              <Input id="br-bottom-right" type="number" className="no-spin" value={bottomRight} onChange={(e) => setBottomRight(Number(e.target.value) || 0)} />
             </div>
             <div className="space-y-2">
-              <Label>Bottom Left</Label>
-              <Input type="number" className="no-spin" value={bottomLeft} onChange={(e) => setBottomLeft(Number(e.target.value) || 0)} />
+              <Label htmlFor="br-bottom-left">Bottom Left</Label>
+              <Input id="br-bottom-left" type="number" className="no-spin" value={bottomLeft} onChange={(e) => setBottomLeft(Number(e.target.value) || 0)} />
             </div>
           </div>
           <div className="h-40 rounded border border-border bg-gradient-to-br from-zinc-900 to-zinc-700 flex items-center justify-center">

@@ -37,6 +37,11 @@
   --hover: #F4F4F5;
   --success: #DCFCE7;
   --success-foreground: #166534;
+  /* Glassmorphism (light): high opacity keeps text contrast >= 4.5:1 */
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-border: rgba(0, 0, 0, 0.10);
+  --glass-blur: 16px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
 }
 
 .dark {
@@ -59,7 +64,8 @@
   --destructive-foreground: #FCA5A5;
   --border: #1F1F1F;
   --input: #111111;
-  --ring: #3F3F46;
+  /* Lightened from #3F3F46 -> ~4.3:1 vs #000 to meet WCAG 1.4.11 (3:1) for focus rings */
+  --ring: #71717A;
   --sidebar: #0D0D0D;
   --sidebar-foreground: #FFFFFF;
   --sidebar-primary: #FFFFFF;
@@ -67,11 +73,16 @@
   --sidebar-accent: #1A1A1A;
   --sidebar-accent-foreground: #FFFFFF;
   --sidebar-border: #1F1F1F;
-  --sidebar-ring: #3F3F46;
+  --sidebar-ring: #71717A;
   --surface: #111111;
   --hover: #1A1A1A;
   --success: #166534;
   --success-foreground: #86EFAC;
+  /* Glassmorphism (dark): translucent dark surface over OLED black */
+  --glass-bg: rgba(17, 17, 19, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-blur: 14px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 @theme inline {
@@ -154,10 +165,126 @@
   background: var(--muted-foreground);
 }
 
-/* Focus visible */
+/* Focus visible — 2px for clear keyboard affordance (WCAG 2.4.7 / 1.4.11) */
 :focus-visible {
-  outline: 1px solid var(--ring);
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+/* Glassmorphism utilities (skill: backdrop-blur 10-20px, subtle border, depth shadow) */
+.glass-surface {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Graceful fallback: solid surface where backdrop-filter is unsupported */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-surface,
+  .glass-panel {
+    background: var(--surface);
+  }
+}
+
+/* Lava lamp — slowly drifting, morphing neon blobs that glass surfaces refract.
+   Motion is intentionally slow (44-72s) so it reads as ambient, not distracting. */
+.lava-lamp {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+.lava-blob {
+  position: absolute;
+  width: 42vmax;
+  height: 42vmax;
+  border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  filter: blur(64px);
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+.lava-blob-1 {
+  top: -12%;
+  left: -10%;
+  background: radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.6), transparent 68%);
+  animation: lava-1 52s ease-in-out infinite;
+}
+.lava-blob-2 {
+  top: 4%;
+  right: -14%;
+  width: 38vmax;
+  height: 38vmax;
+  background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.55), transparent 68%);
+  animation: lava-2 64s ease-in-out infinite;
+}
+.lava-blob-3 {
+  bottom: -16%;
+  left: 14%;
+  width: 46vmax;
+  height: 46vmax;
+  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.55), transparent 70%);
+  animation: lava-3 58s ease-in-out infinite;
+}
+.lava-blob-4 {
+  top: 26%;
+  left: 38%;
+  width: 34vmax;
+  height: 34vmax;
+  background: radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.45), transparent 70%);
+  animation: lava-4 72s ease-in-out infinite;
+}
+
+/* Light theme: drop the screen blend and soften so text stays readable */
+:root:not(.dark) .lava-blob {
+  mix-blend-mode: normal;
+  opacity: 0.28;
+  filter: blur(80px);
+}
+
+@keyframes lava-1 {
+  0%   { transform: translate(0, 0) scale(1); border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+  50%  { transform: translate(24vw, 20vh) scale(1.18); border-radius: 60% 40% 38% 62% / 56% 58% 42% 44%; }
+  100% { transform: translate(0, 0) scale(1); border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+}
+@keyframes lava-2 {
+  0%   { transform: translate(0, 0) scale(1); border-radius: 58% 42% 45% 55% / 60% 40% 60% 40%; }
+  50%  { transform: translate(-22vw, 26vh) scale(0.9); border-radius: 40% 60% 62% 38% / 42% 58% 42% 58%; }
+  100% { transform: translate(0, 0) scale(1); border-radius: 58% 42% 45% 55% / 60% 40% 60% 40%; }
+}
+@keyframes lava-3 {
+  0%   { transform: translate(0, 0) scale(1); border-radius: 50% 50% 55% 45% / 50% 45% 55% 50%; }
+  50%  { transform: translate(18vw, -24vh) scale(1.12); border-radius: 38% 62% 45% 55% / 60% 50% 50% 40%; }
+  100% { transform: translate(0, 0) scale(1); border-radius: 50% 50% 55% 45% / 50% 45% 55% 50%; }
+}
+@keyframes lava-4 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-20vw, -18vh) scale(1.22); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* Respect motion preferences — neutralize animations/transitions (skill: High severity) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Hide native number arrows to match UI style */

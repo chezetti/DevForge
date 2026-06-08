@@ -25,16 +25,16 @@ export function CssGridGenerator() {
         <div className="border border-border rounded bg-background-secondary p-4 space-y-4 min-h-[360px]">
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-2">
-              <Label>Columns</Label>
-              <Input type="number" className="no-spin" min={1} max={6} value={columns} onChange={(e) => setColumns(Math.max(1, Math.min(6, Number(e.target.value) || 1)))} />
+              <Label htmlFor="grid-columns">Columns</Label>
+              <Input id="grid-columns" type="number" className="no-spin" min={1} max={6} value={columns} onChange={(e) => setColumns(Math.max(1, Math.min(6, Number(e.target.value) || 1)))} />
             </div>
             <div className="space-y-2">
-              <Label>Rows</Label>
-              <Input type="number" className="no-spin" min={1} max={6} value={rows} onChange={(e) => setRows(Math.max(1, Math.min(6, Number(e.target.value) || 1)))} />
+              <Label htmlFor="grid-rows">Rows</Label>
+              <Input id="grid-rows" type="number" className="no-spin" min={1} max={6} value={rows} onChange={(e) => setRows(Math.max(1, Math.min(6, Number(e.target.value) || 1)))} />
             </div>
             <div className="space-y-2">
-              <Label>Gap</Label>
-              <Input type="number" className="no-spin" min={0} max={40} value={gap} onChange={(e) => setGap(Math.max(0, Math.min(40, Number(e.target.value) || 0)))} />
+              <Label htmlFor="grid-gap">Gap</Label>
+              <Input id="grid-gap" type="number" className="no-spin" min={0} max={40} value={gap} onChange={(e) => setGap(Math.max(0, Math.min(40, Number(e.target.value) || 0)))} />
             </div>
           </div>
           <div className="h-44 rounded border border-border bg-zinc-900 p-3">

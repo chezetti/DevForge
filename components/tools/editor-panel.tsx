@@ -143,7 +143,7 @@ export function EditorPanel({
       onDrop={handleDrop}
     >
       {(title || showToolbar) && (
-        <div className="flex items-center justify-between px-2 sm:px-3 py-1.5 sm:py-2 border-b border-border">
+        <div className="flex items-center justify-between px-2 sm:px-3 py-1.5 sm:py-2 border-b border-border glass-surface">
           {title && (
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               {title}

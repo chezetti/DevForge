@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
+import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
 import { CheckCircle2, XCircle, Play } from 'lucide-react'
 import { ToolShell } from '@/components/tools/tool-shell'
 import { EditorPanel } from '@/components/tools/editor-panel'
@@ -34,6 +35,9 @@ export function JsonValidator() {
     setValidation(validateJson(value))
   }, [])
 
+  // Debounce live validation so large inputs don't re-parse on every keystroke.
+  const debouncedValidate = useDebouncedCallback((value: string) => validate(value), 200)
+
   useEffect(() => {
     const draft = getToolDraft(tool.id)
     const initial = draft || EXAMPLE
@@ -46,10 +50,10 @@ export function JsonValidator() {
       setInput(value)
       setToolDraft(tool.id, value)
       if (autoRun) {
-        validate(value)
+        debouncedValidate(value)
       }
     },
-    [setToolDraft, tool.id, autoRun, validate]
+    [setToolDraft, tool.id, autoRun, debouncedValidate]
   )
 
   const handleHistorySelect = useCallback(
