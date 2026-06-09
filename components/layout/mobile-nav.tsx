@@ -43,7 +43,10 @@ export function MobileNav() {
               <Menu className="h-4 w-4" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[280px] glass-surface p-0">
+          <SheetContent
+            side="left"
+            className="w-[280px] glass-surface p-0 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)] data-[state=open]:duration-500 data-[state=closed]:duration-300"
+          >
             <div className="flex items-center p-4 pr-12 border-b border-border">
               <span className="font-semibold">DevForge</span>
             </div>
@@ -79,12 +82,16 @@ export function MobileNav() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {categories.map((category) => {
+                  {categories.map((category, index) => {
                     const categoryTools = filteredTools.filter(
                       (t) => t.category === category
                     )
                     return (
-                      <div key={category}>
+                      <div
+                        key={category}
+                        className="sheet-stagger-item"
+                        style={{ animationDelay: `${index * 45}ms` }}
+                      >
                         <div className="px-2 py-1 text-xs font-medium text-muted-foreground uppercase tracking-wide">
                           {categoryLabels[category]}
                         </div>

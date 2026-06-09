@@ -100,10 +100,17 @@ export function Sidebar() {
 
   const categories = getCategories()
 
-  if (!sidebarOpen) return null
-
   return (
-    <aside className="w-[240px] h-full glass-surface border-r border-sidebar-border flex flex-col">
+    <aside
+      className={cn(
+        'h-full glass-surface border-sidebar-border flex flex-col overflow-hidden transition-[width,transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
+        sidebarOpen
+          ? 'w-[240px] translate-x-0 border-r opacity-100'
+          : 'w-0 -translate-x-2 opacity-0 border-r-0'
+      )}
+      aria-hidden={!sidebarOpen}
+      inert={!sidebarOpen || undefined}
+    >
       <div className="p-3">
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -222,35 +229,44 @@ export function Sidebar() {
                     </span>
                   </button>
 
-                  {isExpanded && (
-                    <div className="ml-5 space-y-0.5 mt-0.5">
-                      {categoryTools.map((tool) => {
-                        const isActive = pathname === getToolUrl(tool.category, tool.id)
-                        return (
-                          <Link
-                            key={tool.id}
-                            href={getToolUrl(tool.category, tool.id)}
-                            className={cn(
-                              'flex items-center gap-2 px-2 py-1.5 text-sm rounded transition-colors duration-100 relative',
-                              isActive
-                                ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                                : 'text-muted-foreground hover:text-foreground hover:bg-hover'
-                            )}
-                          >
-                            {isActive && (
-                              <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-foreground rounded-r" />
-                            )}
-                            <span className="truncate">{tool.title}</span>
-                            {!tool.implemented && (
-                              <span className="ml-auto text-[10px] text-muted-foreground/50">
-                                Soon
-                              </span>
-                            )}
-                          </Link>
-                        )
-                      })}
+                  <div
+                    className={cn(
+                      'collapse-grid',
+                      isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                    )}
+                    aria-hidden={!isExpanded}
+                    inert={!isExpanded || undefined}
+                  >
+                    <div>
+                      <div className="ml-5 space-y-0.5 mt-0.5 pt-px">
+                        {categoryTools.map((tool) => {
+                          const isActive = pathname === getToolUrl(tool.category, tool.id)
+                          return (
+                            <Link
+                              key={tool.id}
+                              href={getToolUrl(tool.category, tool.id)}
+                              className={cn(
+                                'flex items-center gap-2 px-2 py-1.5 text-sm rounded transition-colors duration-100 relative',
+                                isActive
+                                  ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                                  : 'text-muted-foreground hover:text-foreground hover:bg-hover'
+                              )}
+                            >
+                              {isActive && (
+                                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-foreground rounded-r" />
+                              )}
+                              <span className="truncate">{tool.title}</span>
+                              {!tool.implemented && (
+                                <span className="ml-auto text-[10px] text-muted-foreground/50">
+                                  Soon
+                                </span>
+                              )}
+                            </Link>
+                          )
+                        })}
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               )
             })}

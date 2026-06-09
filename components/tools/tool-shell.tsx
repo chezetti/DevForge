@@ -109,7 +109,7 @@ export function ToolShell({
   }
 
   return (
-    <div className="flex flex-col h-full min-h-0">
+    <div className="tool-enter flex flex-col h-full min-h-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-border glass-surface">
         <div className="flex flex-col gap-0.5 min-w-0">
           <h1 className="text-base sm:text-lg font-semibold text-foreground truncate">{safeTool.title}</h1>
@@ -200,17 +200,19 @@ export function ToolShell({
                 <span className="text-sm">Panel layout</span>
                 <div className="flex items-center gap-1">
                   <Button
-                    variant={panelOrientation === 'horizontal' ? 'secondary' : 'ghost'}
+                    variant={panelOrientation === 'horizontal' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setPanelOrientation('horizontal')}
+                    aria-pressed={panelOrientation === 'horizontal'}
                     className="h-7 px-2 text-xs"
                   >
                     Horizontal
                   </Button>
                   <Button
-                    variant={panelOrientation === 'vertical' ? 'secondary' : 'ghost'}
+                    variant={panelOrientation === 'vertical' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setPanelOrientation('vertical')}
+                    aria-pressed={panelOrientation === 'vertical'}
                     className="h-7 px-2 text-xs"
                   >
                     Vertical

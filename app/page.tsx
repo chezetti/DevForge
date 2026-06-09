@@ -4,6 +4,7 @@ import { useCallback, useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AppShell } from "@/components/layout/app-shell";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { TOOL_REGISTRY, FEATURED_TOOLS, getToolUrl, type Tool, type ToolCategory } from "@/config/tool-registry";
@@ -126,7 +127,7 @@ export default function HomePage() {
 
   return (
     <AppShell>
-      <div className="relative flex-1 overflow-auto">
+      <div className="relative overflow-x-clip">
         {/* Lava lamp — slow drifting neon blobs that glass surfaces refract */}
         <div className="lava-lamp" aria-hidden="true">
           <span className="lava-blob lava-blob-1" />
@@ -137,15 +138,20 @@ export default function HomePage() {
         <div className="relative z-10 max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12">
           {/* Hero Section */}
           <div className="text-center mb-8 sm:mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-4 text-balance">
-              Developer Tools
-            </h1>
-            <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              A comprehensive collection of tools for developers. Format, validate,
-              convert, and generate code with ease.
-            </p>
+            <ScrollReveal direction="top" delay={0}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-4 text-balance">
+                Developer Tools
+              </h1>
+            </ScrollReveal>
+            <ScrollReveal direction="top" delay={90}>
+              <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+                A comprehensive collection of tools for developers. Format, validate,
+                convert, and generate code with ease.
+              </p>
+            </ScrollReveal>
 
             {/* Search */}
+            <ScrollReveal direction="top" delay={180}>
             <div className="relative max-w-xl mx-auto mt-6 sm:mt-8" ref={searchRef}>
               <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 sm:h-5 w-4 sm:w-5 text-muted-foreground" />
               <Input
@@ -183,43 +189,60 @@ export default function HomePage() {
                 </div>
               )}
             </div>
+            </ScrollReveal>
           </div>
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-8 sm:mb-12">
-            <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
-              <p className="text-2xl sm:text-3xl font-bold tabular-nums">{allTools.length}</p>
-              <p className="text-xs sm:text-sm text-muted-foreground">Total Tools</p>
-            </div>
-            <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
-              <p className="text-2xl sm:text-3xl font-bold tabular-nums">{TOOL_REGISTRY.length}</p>
-              <p className="text-xs sm:text-sm text-muted-foreground">Categories</p>
-            </div>
-            <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
-              <p className="text-2xl sm:text-3xl font-bold tabular-nums">{favorites.length}</p>
-              <p className="text-xs sm:text-sm text-muted-foreground">Favorites</p>
-            </div>
-            <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
-              <p className="text-2xl sm:text-3xl font-bold tabular-nums">{recentTools.length}</p>
-              <p className="text-xs sm:text-sm text-muted-foreground">Recently Used</p>
-            </div>
+            <ScrollReveal direction="left" delay={0}>
+              <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums">{allTools.length}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Total Tools</p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal direction="top" delay={80}>
+              <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums">{TOOL_REGISTRY.length}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Categories</p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal direction="right" delay={160}>
+              <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums">{favorites.length}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Favorites</p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal direction="right" delay={240}>
+              <div className="p-3 sm:p-4 rounded-lg glass-panel text-center transition-transform hover:-translate-y-0.5">
+                <p className="text-2xl sm:text-3xl font-bold tabular-nums">{recentTools.length}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Recently Used</p>
+              </div>
+            </ScrollReveal>
           </div>
 
           {/* Favorites Section */}
           {favoriteToolsData.length > 0 && (
             <section className="mb-8 sm:mb-12">
-              <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                <h2 className="text-lg sm:text-xl font-semibold">Favorites</h2>
-              </div>
+              <ScrollReveal direction="left">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                  <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+                  <h2 className="text-lg sm:text-xl font-semibold">Favorites</h2>
+                </div>
+              </ScrollReveal>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {favoriteToolsData.map((tool) => (
-                  <ToolCard
+                {favoriteToolsData.map((tool, index) => (
+                  <ScrollReveal
                     key={tool.id}
-                    tool={tool}
-                    onClick={() => handleToolClick(tool)}
-                    onToggleFavorite={() => toggleFavorite(tool.id)}
-                  />
+                    direction={index % 2 === 0 ? "left" : "right"}
+                    delay={(index % 3) * 80}
+                    className="h-full"
+                  >
+                    <ToolCard
+                      tool={tool}
+                      onClick={() => handleToolClick(tool)}
+                      onToggleFavorite={() => toggleFavorite(tool.id)}
+                    />
+                  </ScrollReveal>
                 ))}
               </div>
             </section>
@@ -228,18 +251,26 @@ export default function HomePage() {
           {/* Recent Tools Section */}
           {recentToolsData.length > 0 && (
             <section className="mb-8 sm:mb-12">
-              <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                <Clock className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-lg sm:text-xl font-semibold">Recently Used</h2>
-              </div>
+              <ScrollReveal direction="left">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                  <Clock className="h-5 w-5 text-muted-foreground" />
+                  <h2 className="text-lg sm:text-xl font-semibold">Recently Used</h2>
+                </div>
+              </ScrollReveal>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {recentToolsData.map((tool) => (
-                  <ToolCard
+                {recentToolsData.map((tool, index) => (
+                  <ScrollReveal
                     key={tool.id}
-                    tool={tool}
-                    onClick={() => handleToolClick(tool)}
-                    onToggleFavorite={() => toggleFavorite(tool.id)}
-                  />
+                    direction={index % 2 === 0 ? "left" : "right"}
+                    delay={(index % 3) * 80}
+                    className="h-full"
+                  >
+                    <ToolCard
+                      tool={tool}
+                      onClick={() => handleToolClick(tool)}
+                      onToggleFavorite={() => toggleFavorite(tool.id)}
+                    />
+                  </ScrollReveal>
                 ))}
               </div>
             </section>
@@ -247,32 +278,46 @@ export default function HomePage() {
 
           {/* Featured Tools Section */}
           <section className="mb-8 sm:mb-12">
-            <div className="flex items-center gap-2 mb-3 sm:mb-4">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <h2 className="text-lg sm:text-xl font-semibold">Featured Tools</h2>
-            </div>
+            <ScrollReveal direction="left">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <Sparkles className="h-5 w-5 text-primary" />
+                <h2 className="text-lg sm:text-xl font-semibold">Featured Tools</h2>
+              </div>
+            </ScrollReveal>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {featuredToolsData.map((tool) => (
-                <ToolCard
+              {featuredToolsData.map((tool, index) => (
+                <ScrollReveal
                   key={tool.id}
-                  tool={tool}
-                  onClick={() => handleToolClick(tool)}
-                  onToggleFavorite={() => toggleFavorite(tool.id)}
-                />
+                  direction={index % 2 === 0 ? "left" : "right"}
+                  delay={(index % 3) * 80}
+                >
+                  <ToolCard
+                    tool={tool}
+                    onClick={() => handleToolClick(tool)}
+                    onToggleFavorite={() => toggleFavorite(tool.id)}
+                  />
+                </ScrollReveal>
               ))}
             </div>
           </section>
 
           {/* All Categories */}
           <section>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Browse by Category</h2>
+            <ScrollReveal direction="top">
+              <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Browse by Category</h2>
+            </ScrollReveal>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
-              {TOOL_REGISTRY.map((category) => {
+              {TOOL_REGISTRY.map((category, index) => {
                 const Icon = CATEGORY_ICONS[category.slug] || Braces;
                 return (
-                  <div
+                  <ScrollReveal
                     key={category.slug}
-                    className="block p-4 sm:p-6 rounded-lg glass-panel transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-xl"
+                    direction={index % 2 === 0 ? "left" : "right"}
+                    delay={(index % 2) * 80}
+                    className="h-full"
+                  >
+                  <div
+                    className="block h-full p-4 sm:p-6 rounded-lg glass-panel transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-xl"
                   >
                     <Link
                       href={`/tools#${category.slug}`}
@@ -308,16 +353,19 @@ export default function HomePage() {
                       )}
                     </div>
                   </div>
+                  </ScrollReveal>
                 );
               })}
             </div>
           </section>
 
           {/* Footer */}
-          <footer className="mt-10 sm:mt-16 pt-6 sm:pt-8 border-t border-border text-center text-xs sm:text-sm text-muted-foreground">
-            <p>Built with Next.js, Tailwind CSS, and shadcn/ui</p>
-            <p className="mt-1">All processing happens locally in your browser</p>
-          </footer>
+          <ScrollReveal direction="top">
+            <footer className="mt-10 sm:mt-16 pt-6 sm:pt-8 border-t border-border text-center text-xs sm:text-sm text-muted-foreground">
+              <p>Built with Next.js, Tailwind CSS, and shadcn/ui</p>
+              <p className="mt-1">All processing happens locally in your browser</p>
+            </footer>
+          </ScrollReveal>
         </div>
       </div>
     </AppShell>
@@ -346,7 +394,7 @@ function ToolCard({ tool, onClick, onToggleFavorite }: ToolCardProps) {
           onClick();
         }
       }}
-      className="group text-left p-4 rounded-lg glass-panel transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-xl cursor-pointer"
+      className="group h-full text-left p-4 rounded-lg glass-panel transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-xl cursor-pointer"
     >
       <div className="flex items-start justify-between mb-2">
         <h3 className="font-medium group-hover:text-primary transition-colors">

@@ -93,6 +93,9 @@ Backed by the `ui-ux-pro-max` skill (`.claude/skills/`); a reference design syst
 - **Reduced motion** is handled globally via `@media (prefers-reduced-motion: reduce)` — don't add motion that ignores it.
 - **Form inputs** need a programmatic label: `<Label htmlFor="x">` + matching `id` (visible label alone is not enough), or `aria-label` for icon-only controls.
 - **Don't convey meaning by color alone** — pair it with text/icon (see password-strength label + bar).
+- **Control borders use `--input`** (dark `#3F3F46`, not the dim `--border`) so inputs, checkboxes, and switch tracks stay visible on OLED black (WCAG 1.4.11). Don't override form-control borders down to `border-border`.
+- **Scroll-reveal**: wrap home/`/tools` blocks in `<ScrollReveal direction delay>` ([components/scroll-reveal.tsx](components/scroll-reveal.tsx)) backed by [hooks/use-scroll-reveal.ts](hooks/use-scroll-reveal.ts) (IntersectionObserver, `once`, reduced-motion safe). Reveal lives on the wrapper; hover transforms stay on the child. Tool pages get a one-shot `.tool-enter` on the `ToolShell` root — don't add scroll-reveal inside tools.
+- **Animated collapse** (sidebar categories) uses the `.collapse-grid` + `grid-rows-[0fr|1fr]` technique in `globals.css` (height animation without JS). The desktop sidebar slides via `transition-[width,transform,opacity]` and stays mounted (`inert` when closed) instead of unmounting.
 
 ## Tests
 
