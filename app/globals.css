@@ -173,6 +173,16 @@
   outline-offset: 2px;
 }
 
+/* Text fields manage their own focus (a subtle border change), so the global
+   outline must not double up into a heavy box while typing. */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[data-slot='command-input']:focus-visible,
+[cmdk-input]:focus-visible {
+  outline: none;
+}
+
 /* Glassmorphism utilities (skill: backdrop-blur 10-20px, subtle border, depth shadow) */
 .glass-surface {
   background: var(--glass-bg);

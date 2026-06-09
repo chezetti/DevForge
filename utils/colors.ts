@@ -214,3 +214,43 @@ export function toCmyk(color: ColorValues): { c: number; m: number; y: number; k
     k: Math.round(k * 100),
   }
 }
+
+/** WCAG relative luminance of an sRGB color (0–1). */
+export function relativeLuminance(color: ColorValues): number {
+  const channel = (v: number) => {
+    const s = v / 255
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4)
+  }
+  return 0.2126 * channel(color.r) + 0.7152 * channel(color.g) + 0.0722 * channel(color.b)
+}
+
+/** WCAG contrast ratio between two colors (1–21). */
+export function contrastRatio(a: ColorValues, b: ColorValues): number {
+  const la = relativeLuminance(a)
+  const lb = relativeLuminance(b)
+  const lighter = Math.max(la, lb)
+  const darker = Math.min(la, lb)
+  return (lighter + 0.05) / (darker + 0.05)
+}
+
+export interface ContrastRating {
+  ratio: number
+  aaNormal: boolean
+  aaaNormal: boolean
+  aaLarge: boolean
+  aaaLarge: boolean
+  uiComponent: boolean
+}
+
+/** Evaluate a contrast ratio against WCAG 2.1 thresholds. */
+export function rateContrast(a: ColorValues, b: ColorValues): ContrastRating {
+  const ratio = contrastRatio(a, b)
+  return {
+    ratio,
+    aaNormal: ratio >= 4.5,
+    aaaNormal: ratio >= 7,
+    aaLarge: ratio >= 3,
+    aaaLarge: ratio >= 4.5,
+    uiComponent: ratio >= 3,
+  }
+}

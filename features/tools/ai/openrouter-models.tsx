@@ -83,12 +83,15 @@ function formatNumber(value?: number): string {
 function formatPerMillion(value?: string): string {
   const price = Number(value ?? 0)
   if (!Number.isFinite(price) || price === 0) return 'Free'
+  // OpenRouter uses negative sentinels (e.g. -1) for router/variable pricing.
+  if (price < 0) return 'Variable'
   return `$${(price * 1_000_000).toFixed(price * 1_000_000 < 1 ? 3 : 2)}`
 }
 
 function formatRequest(value?: string): string {
   const price = Number(value ?? 0)
   if (!Number.isFinite(price) || price === 0) return 'Free'
+  if (price < 0) return 'Variable'
   return `$${price.toFixed(6)}`
 }
 

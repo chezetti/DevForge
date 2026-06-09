@@ -94,6 +94,7 @@ const TimezoneConverter = lazy(() => import("@/features/tools/datetime/timezone-
 const DateFormatter = lazy(() => import("@/features/tools/datetime/date-formatter").then(m => ({ default: m.DateFormatter })));
 
 const ColorConverter = lazy(() => import("@/features/tools/colors/color-converter").then(m => ({ default: m.ColorConverter })));
+const ContrastChecker = lazy(() => import("@/features/tools/colors/contrast-checker").then(m => ({ default: m.ContrastChecker })));
 const GradientGenerator = lazy(() => import("@/features/tools/colors/gradient-generator").then(m => ({ default: m.GradientGenerator })));
 const ColorPaletteGenerator = lazy(() => import("@/features/tools/colors/color-palette-generator").then(m => ({ default: m.ColorPaletteGenerator })));
 const RandomGenerator = lazy(() => import("@/features/tools/devutils/random-generator").then(m => ({ default: m.RandomGenerator })));
@@ -139,7 +140,9 @@ const RomanNumeral = lazy(() => import("@/features/tools/converter/roman-numeral
 const ImageToBase64 = lazy(() => import("@/features/tools/converter/image-to-base64").then(m => ({ default: m.ImageToBase64 })));
 const ImageConverter = lazy(() => import("@/features/tools/converter/image-converter").then(m => ({ default: m.ImageConverter })));
 const JsonToXml = lazy(() => import("@/features/tools/converter/json-to-xml").then(m => ({ default: m.JsonToXml })));
+const JsonNdjson = lazy(() => import("@/features/tools/converter/json-ndjson").then(m => ({ default: m.JsonNdjson })));
 const OpenRouterModels = lazy(() => import("@/features/tools/ai/openrouter-models").then(m => ({ default: m.OpenRouterModels })));
+const AiModelCompare = lazy(() => import("@/features/tools/ai/model-compare").then(m => ({ default: m.AiModelCompare })));
 const YouTubeDownloader = lazy(() => import("@/features/tools/media/youtube-downloader").then(m => ({ default: m.YouTubeDownloader })));
 const InstagramDownloader = lazy(() => import("@/features/tools/media/instagram-downloader").then(m => ({ default: m.InstagramDownloader })));
 const YouTubeToMp3 = lazy(() => import("@/features/tools/media/youtube-to-mp3").then(m => ({ default: m.YouTubeToMp3 })));
@@ -240,6 +243,7 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
 
   // Colors
   "color-converter": ColorConverter,
+  "contrast-checker": ContrastChecker,
   "gradient-generator": GradientGenerator,
   "color-palette-generator": ColorPaletteGenerator,
 
@@ -293,8 +297,10 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   "image-to-base64": ImageToBase64,
   "image-converter": ImageConverter,
   "json-to-xml": JsonToXml,
+  "json-ndjson": JsonNdjson,
 
   // AI
+  "ai-model-compare": AiModelCompare,
   "openrouter-models": OpenRouterModels,
 
   // Media
